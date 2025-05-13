@@ -14,7 +14,7 @@ class WebSocketService {
     [];
 
   constructor() {
-    this.socketUrl = "http://localhost:1000/ws";
+    this.socketUrl = `${process.env.REACT_APP_SOCKET_URL}`;
     this.socket = null;
     this.stompClient = null;
     this.reconnectInterval = 5000; // 5 seconds

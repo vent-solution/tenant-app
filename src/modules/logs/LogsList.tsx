@@ -124,16 +124,14 @@ let LogsList: React.FC<Props> = () => {
       <div className="list w-full relative">
         <div className="bg-white w-full">
           <div className="w-full h-1/3 flex flex-wrap justify-end items-center px-10 py-3 bg-white shadow-lg">
-            {/* <div className="w-full lg:w-1/4">
-              <h1 className="text-blue-950 text-2xl font-bold font-mono ">
-                Vent
-              </h1>
-            </div> */}
+            <div className="w-full lg:w-1/4">
+              <h1 className="text-blue-950 text-2xl">Activity logs</h1>
+            </div>
 
             <div className="w-full lg:w-2/3 flex flex-wrap justify-between items-center">
               <div className="w-full lg:w-1/2 flex justify-between lg:justify-around items-center">
                 {/* <h1 className="text-xl text-blue-900">logs</h1> */}
-                <h1 className="text-lg font-bold">
+                <h1 className="text-lg">
                   {filteredLogs.length + "/" + totalElements}
                 </h1>
               </div>
@@ -160,7 +158,7 @@ let LogsList: React.FC<Props> = () => {
         <div className="lg:px-5 mb-12 overflow-auto pb-5 h-[calc(100svh-150px)] relative">
           {filteredLogs.length > 0 ? (
             <table className="border-2 w-full bg-cyan-50 bordered mt-3 shadow-xl">
-              <thead className="sticky top-0 bg-blue-800 text-base text-white">
+              <thead className="sticky top-0 bg-blue-800 text-white">
                 <tr>
                   <th className="px-2">#</th>
                   {/* <th className="px-2">Log number</th> */}

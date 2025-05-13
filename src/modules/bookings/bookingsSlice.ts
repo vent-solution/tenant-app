@@ -39,7 +39,7 @@ export const fetchTenantBookings = createAsyncThunk(
         `/fetch-bookings-by-tenant/${userId}/${page}/${size}`
       );
 
-      console.log(result.data);
+      if (!result) return initialState;
 
       if (
         (result.data.status && result.data.status !== "OK") ||

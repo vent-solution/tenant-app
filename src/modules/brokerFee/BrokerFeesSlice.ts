@@ -38,6 +38,9 @@ export const fetchBrokerFees = createAsyncThunk(
       const result = await fetchData(
         `/fetch-broker-fees-by-tenant/${userId}/${page}/${size}`
       );
+
+      if (!result) return initialState;
+
       if (result.data.status && result.data.status !== "OK") {
         return initialState;
       }

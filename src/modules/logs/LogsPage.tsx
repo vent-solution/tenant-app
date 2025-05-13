@@ -92,7 +92,6 @@ const LogsPage: React.FC<Props> = () => {
    * to proceed to page or go back to login page
    */
   useEffect(() => {
-    const currentUser = localStorage.getItem("dnap-user");
     if (currentUser) {
       setIsAuthenticated(true);
     } else {
@@ -102,13 +101,9 @@ const LogsPage: React.FC<Props> = () => {
 
   // fetch user logs
   useEffect(() => {
-    const userIdList: number[] = [];
-    userIdList.push(Number(currentUser?.userId));
-    const IDs = Number(tenantUser.userId);
-
-    userIdList.push(IDs);
-
-    dispatch(fetchLogs({ userId: userIdList, page: 0, size: 25 }));
+    dispatch(
+      fetchLogs({ userId: [Number(currentUser?.userId)], page: 0, size: 25 })
+    );
   }, [currentUser?.userId, dispatch, tenantUser.userId]);
 
   // render preloader screen if not authenticated or page still loading

@@ -29,7 +29,7 @@ const userSlice = createSlice({
     // update a user
     updateUser: {
       reducer(state, action: PayloadAction<UpdateModel>) {
-        const { id, changes } = action.payload;
+        const { changes } = action.payload;
 
         state.tenantUser = { ...changes };
       },

@@ -1,21 +1,16 @@
 import React, { useEffect, useRef, useState } from "react";
-import { useDispatch, useSelector } from "react-redux";
-
+import { useDispatch } from "react-redux";
 import axios from "axios";
 import { useLocation, useNavigate, useParams } from "react-router-dom";
-import { FaEye, FaEyeSlash } from "react-icons/fa";
 import { AppDispatch } from "../../app/store";
-import { postData, putData } from "../../global/api";
+import { putData } from "../../global/api";
 import { AlertTypeEnum } from "../../global/enums/alertTypeEnum";
 import { GenderEnum } from "../../global/enums/genderEnum";
 import { UserRoleEnum } from "../../global/enums/userRoleEnum";
-import isValidEmail from "../../global/validation/emailValidation";
 import markRequiredFormField from "../../global/validation/markRequiredFormField";
-import isValidTelephone from "../../global/validation/telephoneValidation";
 import { setAlert } from "../../other/alertSlice";
-
 import { UserModel } from "./models/userModel";
-import { getUser, updateUser } from "./usersSlice";
+import { updateUser } from "./usersSlice";
 import { RxCross2 } from "react-icons/rx";
 
 // function props
@@ -43,8 +38,6 @@ const AddUserForm: React.FC<Props> = ({ toggleShowForm, userData }) => {
     linkedTo: { userId: null },
   });
 
-  const [showPassword, setShowPassword] = useState<boolean>(false);
-
   const [GenderValues] = useState([
     GenderEnum.male,
     GenderEnum.female,
@@ -62,20 +55,20 @@ const AddUserForm: React.FC<Props> = ({ toggleShowForm, userData }) => {
   const firstNameRef = useRef<HTMLInputElement>(null);
 
   // VALIDATE GENDER VALUES
-  const isValidGender =
-    user.gender === GenderEnum.male ||
-    user.gender === GenderEnum.female ||
-    user.gender === GenderEnum.others;
+  // const isValidGender =
+  //   user.gender === GenderEnum.male ||
+  //   user.gender === GenderEnum.female ||
+  //   user.gender === GenderEnum.others;
 
   // CHECK IF REQUIRED FIELDS ARE PROVIDED TO AUTHORIZE SAVING NEW USER
-  const canSave =
-    Boolean(user.firstName) &&
-    Boolean(user.lastName) &&
-    Boolean(user.gender) &&
-    Boolean(user.userRole) &&
-    Boolean(user.userTelephone) &&
-    Boolean(user.userPassword) &&
-    Boolean(user.userEmail);
+  // const canSave =
+  //   Boolean(user.firstName) &&
+  //   Boolean(user.lastName) &&
+  //   Boolean(user.gender) &&
+  //   Boolean(user.userRole) &&
+  //   Boolean(user.userTelephone) &&
+  //   Boolean(user.userPassword) &&
+  //   Boolean(user.userEmail);
 
   // add the linkedTo and addedBy userParameter
   useEffect(() => {

@@ -37,7 +37,6 @@ export const fetchAvailableUnits = createAsyncThunk(
         result.status !== 200 ||
         (result.data.status && result.data.status !== "OK")
       ) {
-        console.log(result);
         return initialState;
       }
 

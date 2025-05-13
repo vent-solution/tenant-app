@@ -33,6 +33,9 @@ export const fetchLogs = createAsyncThunk(
       const result = await fetchData(
         `/fetch-landlord-user-logs/${userId}/${page}/${size}`
       );
+
+      if (!result) return initialState;
+
       if (result.data.status && result.data.status !== "OK") {
         return initialState;
       }
