@@ -19,7 +19,7 @@ const LandingPage: React.FC = () => {
 
         console.log(result);
         if (!result) {
-          navigate("/");
+          window.location.href = "http://54.245.213.15/";
           return;
         }
 
@@ -38,14 +38,14 @@ const LandingPage: React.FC = () => {
           })
         );
 
-        navigate("/home");
+        window.location.href = "http://54.245.213.15/home";
       } catch (error) {
         if (axios.isCancel(error)) {
           console.log("Request canceled: ", error.message);
         } else {
           console.error("Error fetching user:", error);
         }
-        navigate("/");
+        window.location.href = "http://54.245.213.15/";
       }
     };
 
