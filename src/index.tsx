@@ -24,10 +24,8 @@ const root = ReactDOM.createRoot(
 root.render(
   // <React.StrictMode>
   <Provider store={store}>
-    <Router basename="/tenant">
-      <Routes>
-        <Route path="/*" element={<App />} />
-      </Routes>
+    <Router basename={process.env.NODE_ENV === "production" ? "/tenant" : "/"}>
+      <App />
     </Router>
   </Provider>
   // </React.StrictMode>
