@@ -1,38 +1,31 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect } from "react";
+import { useParams, useNavigate } from "react-router-dom";
+import { useDispatch } from "react-redux";
 import axios from "axios";
-import { useParams } from "react-router-dom";
-
 import Preloader from "../other/Preloader";
 import { fetchData } from "../global/api";
 import { AppDispatch } from "../app/store";
-import { useDispatch } from "react-redux";
 import { updateUser } from "./users/usersSlice";
 
-interface Props {}
-
-const LandingPage: React.FC<Props> = () => {
+const LandingPage: React.FC = () => {
   const { userId } = useParams();
-
   const dispatch = useDispatch<AppDispatch>();
+  const navigate = useNavigate();
 
-  // fetch current logged in user
   useEffect(() => {
-    const fetchCurrentUser = async (userId: number) => {
+    const fetchCurrentUser = async (id: number) => {
       try {
-        const result = await fetchData(`/fetch-current-user/${userId}`);
+        const result = await fetchData(`/fetch-current-user/${id}`);
 
+        console.log(result);
         if (!result) {
-          window.location.href = "/";
-          // window.location.href = "http://localhost:3000";
+          navigate("/");
           return;
         }
 
-        const updates = {
-          id: String(result.data.userId),
-          changes: result.data,
-        };
-
-        dispatch(updateUser(updates));
+        dispatch(
+          updateUser({ id: String(result.data.userId), changes: result.data })
+        );
 
         localStorage.setItem(
           "dnap-user",
@@ -45,19 +38,25 @@ const LandingPage: React.FC<Props> = () => {
           })
         );
 
-        window.location.href = `/home`;
+        navigate("/home");
       } catch (error) {
         if (axios.isCancel(error)) {
-          console.log(error.message);
+          console.log("Request canceled: ", error.message);
+        } else {
+          console.error("Error fetching user:", error);
         }
+        navigate("/");
       }
     };
 
-    fetchCurrentUser(Number(userId));
-  }, [userId]);
+    const idNum = Number(userId);
+    if (!userId || isNaN(idNum)) {
+      navigate("/");
+      return;
+    }
 
-  // if (isShowLandlordForm)
-  //   return <LandlordForm landlord={landlord} setLandlord={setLandlord} />;
+    fetchCurrentUser(idNum);
+  }, [userId, dispatch, navigate]);
 
   return (
     <div className="main flex relative w-full">

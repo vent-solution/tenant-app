@@ -46,21 +46,37 @@ function App() {
       <Route path="/" element={<Layout />}>
         <Route path="tenant/:userId" element={<LandingPage />} />
 
-        <Route path={`/home`} element={<HomePage />} />
+        <Route path={`/home`}>
+          <Route index element={<HomePage />} />
+        </Route>
 
-        <Route path="facilitiesForSale" element={<FacilitiesForSalePage />} />
+        <Route path="facilitiesForSale">
+          <Route index element={<FacilitiesForSalePage />} />
+        </Route>
 
-        <Route path="accommodations" element={<AccommodationsPage />} />
+        <Route path="accommodations">
+          <Route index element={<AccommodationsPage />} />
+        </Route>
 
-        <Route path="bookings" element={<BookingsPage />} />
+        <Route path="bookings">
+          <Route index element={<BookingsPage />} />
+        </Route>
 
-        <Route path="brokerFees" element={<BrokerFeePage />} />
+        <Route path="brokerFees">
+          <Route index element={<BrokerFeePage />} />
+        </Route>
 
-        <Route path="history" element={<HistoryPage />} />
+        <Route path="history">
+          <Route index element={<HistoryPage />} />
+        </Route>
 
-        <Route path="receipts" element={<ReceiptsPage />} />
+        <Route path="receipts">
+          <Route index element={<ReceiptsPage />} />
+        </Route>
 
-        <Route path="logs" element={<LogsPage />} />
+        <Route path="logs">
+          <Route index element={<LogsPage />} />
+        </Route>
 
         <Route path="users">
           <Route index element={<UsersPage />} />
