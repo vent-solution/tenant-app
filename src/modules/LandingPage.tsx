@@ -22,7 +22,8 @@ const LandingPage: React.FC<Props> = () => {
         const result = await fetchData(`/fetch-current-user/${userId}`);
 
         if (!result) {
-          window.location.href = "http://localhost:3000";
+          window.location.href = "/";
+          // window.location.href = "http://localhost:3000";
           return;
         }
 
@@ -44,22 +45,7 @@ const LandingPage: React.FC<Props> = () => {
           })
         );
 
-        // if (result.data.userRole === UserRoleEnum.landlord) {
-        //   const landlord = await fetchData(
-        //     `/fetch-landlord-by-user-id/${Number(result.data.userId)}`
-        //   );
-
-        //   if (!landlord) {
-        //     return;
-        //   }
-
-        // if (landlord.status && landlord.status !== 200) {
-        //   setIsShowLandlordForm(true);
-        //   return;
-        // } else {
         window.location.href = `/home`;
-        // }
-        // }
       } catch (error) {
         if (axios.isCancel(error)) {
           console.log(error.message);

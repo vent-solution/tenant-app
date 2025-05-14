@@ -44,7 +44,7 @@ function App() {
   return (
     <Routes>
       <Route path="/" element={<Layout />}>
-        <Route path={`/:userId`}>
+        <Route path={`/tenant/:userId`}>
           <Route index element={<LandingPage />} />
         </Route>
 
