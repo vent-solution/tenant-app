@@ -297,7 +297,7 @@ let BookingForm: React.FC<Props> = ({
                     }
                   />
                   <img
-                    src="/FILES/IMAGES/payment-method-images/mtn-momo.png"
+                    src={`${process.env.REACT_APP_PAYMENT_METHOD_IMAGES}/mtn-momo.png`}
                     alt=""
                     height={50}
                     width={100}
@@ -327,7 +327,7 @@ let BookingForm: React.FC<Props> = ({
                     }
                   />
                   <img
-                    src="/FILES/IMAGES/payment-method-images/airtel-money.png"
+                    src={`${process.env.REACT_APP_PAYMENT_METHOD_IMAGES}/airtel-money.png`}
                     alt=""
                     height={50}
                     width={100}
@@ -355,7 +355,7 @@ let BookingForm: React.FC<Props> = ({
                     }
                   />
                   <img
-                    src="/FILES/IMAGES/payment-method-images/visa-payment.png"
+                    src={`${process.env.REACT_APP_PAYMENT_METHOD_IMAGES}/visa-payment.png`}
                     alt=""
                     height={50}
                     width={100}
@@ -383,7 +383,7 @@ let BookingForm: React.FC<Props> = ({
                     }
                   />
                   <img
-                    src="/FILES/IMAGES/payment-method-images/paypal.jpeg"
+                    src={`${process.env.REACT_APP_PAYMENT_METHOD_IMAGES}/paypal.jpeg`}
                     alt=""
                     height={50}
                     width={100}

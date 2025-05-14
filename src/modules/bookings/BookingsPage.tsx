@@ -51,12 +51,12 @@ const BookingsPage: React.FC<Props> = () => {
       active: false,
     },
 
-    {
-      icon: <IoDiamondSharp />,
-      name: "Broker fees",
-      link: "/brokerFees",
-      active: false,
-    },
+    // {
+    //   icon: <IoDiamondSharp />,
+    //   name: "Broker fees",
+    //   link: "/brokerFees",
+    //   active: false,
+    // },
 
     {
       icon: <FaReceipt />,

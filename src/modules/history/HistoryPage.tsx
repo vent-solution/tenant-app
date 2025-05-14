@@ -36,12 +36,12 @@ const AccommodationsPage: React.FC<Props> = () => {
       active: false,
     },
 
-    {
-      icon: <TbBrandBooking />,
-      name: "Bookings",
-      link: "/bookings",
-      active: false,
-    },
+    // {
+    //   icon: <TbBrandBooking />,
+    //   name: "Bookings",
+    //   link: "/bookings",
+    //   active: false,
+    // },
 
     {
       icon: <FaHistory />,
