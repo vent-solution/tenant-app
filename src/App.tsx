@@ -18,22 +18,18 @@ import { accommodationsTopicSubscription } from "./webSockets/subscriptionTopics
 import { getUserLocation } from "./global/api";
 import LandingPage from "./modules/LandingPage";
 import AccommodationsPage from "./modules/accommodations/AccommodationsPage";
+import { Navigate } from "react-router-dom";
 
 function App() {
-  console.log("TENANT APP");
-
   const [, setLoading] = useState(false);
-
   const dispatch = useDispatch<AppDispatch>();
 
   useEffect(() => {
     webSocketService.connect();
-
     usersTopicSubscription(setLoading, dispatch);
     accommodationsTopicSubscription(dispatch);
 
     return () => {
-      console.log("Unsubscribing from WebSocket...");
       webSocketService.unsubscribe("/topic/users");
       webSocketService.disconnect();
     };
@@ -45,48 +41,28 @@ function App() {
 
   return (
     <Routes>
-      <Route path="/" element={<Layout />}>
+      {/* Optional redirect to a default tenant */}
+      <Route path="/" element={<Navigate to="/1/home" />} />
+
+      {/* All tenant routes go under this path */}
+      <Route path=":tenantId" element={<Layout />}>
         <Route index element={<LandingPage />} />
-
-        <Route path="/tenant/:userId" element={<LandingPage />} />
-
-        <Route path={`home`}>
-          <Route index element={<HomePage />} />
-        </Route>
-
-        <Route path="facilitiesForSale">
-          <Route index element={<FacilitiesForSalePage />} />
-        </Route>
-
-        <Route path="accommodations">
-          <Route index element={<AccommodationsPage />} />
-        </Route>
-
-        <Route path="bookings">
-          <Route index element={<BookingsPage />} />
-        </Route>
-
-        <Route path="brokerFees">
-          <Route index element={<BrokerFeePage />} />
-        </Route>
-
-        <Route path="history">
-          <Route index element={<HistoryPage />} />
-        </Route>
-
-        <Route path="receipts">
-          <Route index element={<ReceiptsPage />} />
-        </Route>
-
-        <Route path="logs">
-          <Route index element={<LogsPage />} />
-        </Route>
-
+        <Route path="home" element={<HomePage />} />
+        <Route path="facilitiesForSale" element={<FacilitiesForSalePage />} />
+        <Route path="accommodations" element={<AccommodationsPage />} />
+        <Route path="bookings" element={<BookingsPage />} />
+        <Route path="brokerFees" element={<BrokerFeePage />} />
+        <Route path="history" element={<HistoryPage />} />
+        <Route path="receipts" element={<ReceiptsPage />} />
+        <Route path="logs" element={<LogsPage />} />
         <Route path="users">
           <Route index element={<UsersPage />} />
           <Route path=":userId" element={<SingleUserPage />} />
         </Route>
       </Route>
+
+      {/* Optional fallback for unmatched routes */}
+      <Route path="*" element={<div>404 - Page Not Found</div>} />
     </Routes>
   );
 }
