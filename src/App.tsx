@@ -46,6 +46,8 @@ function App() {
   return (
     <Routes>
       <Route path="/" element={<Layout />}>
+        <Route index element={<LandingPage />} />
+
         <Route path="/tenant/:userId" element={<LandingPage />} />
 
         <Route path={`home`}>
