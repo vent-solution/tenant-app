@@ -20,6 +20,8 @@ import LandingPage from "./modules/LandingPage";
 import AccommodationsPage from "./modules/accommodations/AccommodationsPage";
 
 function App() {
+  console.log("TENANT APP");
+
   const [, setLoading] = useState(false);
 
   const dispatch = useDispatch<AppDispatch>();
@@ -46,7 +48,7 @@ function App() {
       <Route path="/" element={<Layout />}>
         <Route path="/tenant/:userId" element={<LandingPage />} />
 
-        <Route path={`/home`}>
+        <Route path={`home`}>
           <Route index element={<HomePage />} />
         </Route>
 

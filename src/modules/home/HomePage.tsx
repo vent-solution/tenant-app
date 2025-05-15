@@ -9,11 +9,11 @@ import { PiBuildingsFill } from "react-icons/pi";
 import { FaHistory, FaReceipt } from "react-icons/fa";
 import Units from "./Units";
 import { TbBrandBooking } from "react-icons/tb";
-import { IoDiamondSharp } from "react-icons/io5";
 
 interface Props {}
 
 const HomePage: React.FC<Props> = () => {
+  console.log("HOME");
   const [navLinks] = useState<NavLinkModel[]>([
     {
       icon: <MdDashboard />,
