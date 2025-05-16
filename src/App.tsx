@@ -42,11 +42,14 @@ function App() {
   return (
     <Routes>
       {/* Optional redirect to a default tenant */}
-      <Route path="/" element={<Navigate to="/1/home" />} />
+      {/* <Route path="/" element={<Navigate to="/1/home" />} /> */}
 
       {/* All tenant routes go under this path */}
-      <Route path=":tenantId" element={<Layout />}>
-        <Route index element={<LandingPage />} />
+      <Route path="/" element={<Layout />}>
+        {/* <Route index element={<LandingPage />} /> */}
+        <Route path=":tenantId">
+          <Route index element={<LandingPage />} />
+        </Route>
         <Route path="home" element={<HomePage />} />
         <Route path="facilitiesForSale" element={<FacilitiesForSalePage />} />
         <Route path="accommodations" element={<AccommodationsPage />} />
