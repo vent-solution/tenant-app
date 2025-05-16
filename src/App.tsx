@@ -18,10 +18,9 @@ import { accommodationsTopicSubscription } from "./webSockets/subscriptionTopics
 import { getUserLocation } from "./global/api";
 import LandingPage from "./modules/LandingPage";
 import AccommodationsPage from "./modules/accommodations/AccommodationsPage";
+import { Navigate } from "react-router-dom";
 
 function App() {
-  console.log("TENANT APP");
-
   const [, setLoading] = useState(false);
   const dispatch = useDispatch<AppDispatch>();
 
@@ -31,7 +30,6 @@ function App() {
     accommodationsTopicSubscription(dispatch);
 
     return () => {
-      console.log("Unsubscribing from WebSocket...");
       webSocketService.unsubscribe("/topic/users");
       webSocketService.disconnect();
     };
@@ -43,9 +41,12 @@ function App() {
 
   return (
     <Routes>
+      {/* Optional redirect to a default tenant */}
+      {/* <Route path="/" element={<Navigate to="/1/home" />} /> */}
+
+      {/* All tenant routes go under this path */}
       <Route path=":tenantId" element={<Layout />}>
         <Route index element={<LandingPage />} />
-
         <Route path="home" element={<HomePage />} />
         <Route path="facilitiesForSale" element={<FacilitiesForSalePage />} />
         <Route path="accommodations" element={<AccommodationsPage />} />
@@ -59,6 +60,9 @@ function App() {
           <Route path=":userId" element={<SingleUserPage />} />
         </Route>
       </Route>
+
+      {/* Optional fallback for unmatched routes */}
+      <Route path="*" element={<div>404 - Page Not Found</div>} />
     </Routes>
   );
 }
