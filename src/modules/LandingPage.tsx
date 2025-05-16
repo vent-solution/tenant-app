@@ -51,7 +51,7 @@ const LandingPage: React.FC = () => {
 
     const idNum = Number(userId);
     if (!userId || isNaN(idNum)) {
-      navigate("/");
+      window.location.href = "http://54.245.213.15/";
       return;
     }
 
