@@ -46,7 +46,7 @@ function App() {
 
       {/* All tenant routes go under this path */}
       <Route path="/" element={<Layout />}>
-        {/* <Route index element={<LandingPage />} /> */}
+        <Route index element={<LandingPage />} />
         <Route path=":tenantId">
           <Route index element={<LandingPage />} />
         </Route>
