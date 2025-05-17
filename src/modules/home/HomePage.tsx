@@ -82,7 +82,7 @@ const HomePage: React.FC<Props> = () => {
     if (current_user) {
       setIsAuthenticated(true);
     } else {
-      window.location.href = "/";
+      window.location.href = "http://54.245.213.15/";
     }
   }, []);
 

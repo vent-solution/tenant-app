@@ -17,7 +17,6 @@ const LandingPage: React.FC = () => {
       try {
         const result = await fetchData(`/fetch-current-user/${id}`);
 
-        console.log(result);
         if (!result) {
           window.location.href = "http://54.245.213.15/";
           return;
@@ -51,7 +50,7 @@ const LandingPage: React.FC = () => {
 
     const idNum = Number(userId);
     if (!userId || isNaN(idNum)) {
-      window.location.href = "http://54.245.213.15/home";
+      window.location.href = "http://54.245.213.15/";
       return;
     }
 
