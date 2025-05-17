@@ -18,7 +18,7 @@ const LandingPage: React.FC = () => {
         const result = await fetchData(`/fetch-current-user/${id}`);
 
         if (!result) {
-          window.location.href = "http://54.245.213.15/";
+          window.location.href = "/";
           return;
         }
 
@@ -37,20 +37,20 @@ const LandingPage: React.FC = () => {
           })
         );
 
-        window.location.href = "http://54.245.213.15/home";
+        window.location.href = "/home";
       } catch (error) {
         if (axios.isCancel(error)) {
           console.log("Request canceled: ", error.message);
         } else {
           console.error("Error fetching user:", error);
         }
-        window.location.href = "http://54.245.213.15/";
+        window.location.href = "/";
       }
     };
 
     const idNum = Number(userId);
     if (!userId || isNaN(idNum)) {
-      window.location.href = "http://54.245.213.15/";
+      window.location.href = "/";
       return;
     }
 
