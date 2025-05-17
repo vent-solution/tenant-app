@@ -37,7 +37,7 @@ const LandingPage: React.FC = () => {
           })
         );
 
-        window.location.href = "/tenant/home";
+        navigate("/home");
       } catch (error) {
         if (axios.isCancel(error)) {
           console.log("Request canceled: ", error.message);
