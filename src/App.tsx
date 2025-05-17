@@ -49,14 +49,14 @@ function App() {
         <Route path=":userId">
           <Route index element={<LandingPage />} />
         </Route>
-        <Route path="/home" element={<HomePage />} />
-        <Route path="/facilitiesForSale" element={<FacilitiesForSalePage />} />
-        <Route path="/accommodations" element={<AccommodationsPage />} />
-        <Route path="/bookings" element={<BookingsPage />} />
-        <Route path="/brokerFees" element={<BrokerFeePage />} />
-        <Route path="/history" element={<HistoryPage />} />
-        <Route path="/receipts" element={<ReceiptsPage />} />
-        <Route path="/logs" element={<LogsPage />} />
+        <Route path="home" element={<HomePage />} />
+        <Route path="facilitiesForSale" element={<FacilitiesForSalePage />} />
+        <Route path="accommodations" element={<AccommodationsPage />} />
+        <Route path="bookings" element={<BookingsPage />} />
+        <Route path="brokerFees" element={<BrokerFeePage />} />
+        <Route path="history" element={<HistoryPage />} />
+        <Route path="receipts" element={<ReceiptsPage />} />
+        <Route path="logs" element={<LogsPage />} />
 
         <Route path="users">
           <Route index element={<UsersPage />} />
