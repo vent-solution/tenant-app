@@ -1,6 +1,6 @@
 #!/bin/bash
 
-cd /var/www/html/entry-app
+cd /var/www/html/tenant-app
 
 ls -la
 
