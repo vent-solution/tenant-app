@@ -157,7 +157,7 @@ const LoginForm: React.FC = () => {
         </div>
         <div className="form-group py-2">
           <label htmlFor="userName" className="w-full text-white">
-            Email *
+            Email*
           </label>
           <input
             type="text"
