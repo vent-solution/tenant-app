@@ -73,8 +73,11 @@ let RentForm: React.FC<Props> = ({ accommodationId, setIsShowRentForm }) => {
       localStorage.getItem("dnap-user") as string
     );
 
-    // check if checkIn date is provided
-    if (String(rentData.amount).trim().length < 1) {
+    // check if checkIn rent amount is valid
+    if (
+      String(rentData.amount).trim().length < 1 ||
+      Number(rentData.amount) < 1
+    ) {
       dispatch(setConfirm({ status: false, message: "" }));
       dispatch(
         setAlert({
