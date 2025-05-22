@@ -184,9 +184,9 @@ const HistoryList: React.FC<Props> = () => {
           <div className="w-full h-1/3 flex flex-wrap justify-between items-center px-10 py-3">
             <div className="w-full lg:w-1/4"></div>
 
-            <div className="w-full lg:w-2/3 flex flex-wrap justify-between items-center">
+            <div className="w-full flex flex-wrap justify-between items-center">
+              <h1 className="text-2xl text-blue-900">History</h1>
               <div className="w-full lg:w-1/2 flex justify-between lg:justify-around items-center">
-                <h1 className="text-2xl text-blue-900">History</h1>
                 <h1 className="text-lg">
                   {filteredTenantHistory.length + "/" + totalElements}
                 </h1>
