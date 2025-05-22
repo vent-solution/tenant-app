@@ -198,8 +198,8 @@ const BrokerFeeList: React.FC<Props> = () => {
             </table>
           ) : (
             <div className="w-ull h-full flex flex-wrap justify-center items-center">
-              <h1 className="text-xl w-full px-10 flex justify-center items-center">
-                <FaCircleExclamation className="text-red-500 mx-5" />{" "}
+              <h1 className="text-xl w-full px-10 flex justify-center items-center font-extralight">
+                <FaCircleExclamation className="text-red-500 mx-5 text-xl" />{" "}
                 <span>NO RESULT FOUND</span>
               </h1>
               <div
