@@ -161,7 +161,7 @@ const ReceiptsList: React.FC<Props> = () => {
                   type="text"
                   name=""
                   id="search-subscription"
-                  placeholder="Search for history..."
+                  placeholder="Search for receipt"
                   className={`rounded-full w-full p-2 py-0 outline-none transition-all ease-in-out delay-150`}
                   onChange={handleSearchFacilityHistory}
                 />
@@ -180,9 +180,8 @@ const ReceiptsList: React.FC<Props> = () => {
         >
           {filteredReceipts.length > 0 ? (
             <table className="border-2 w-full bg-white mt-2 lg:mt-0 shadow-lg">
-              <thead className="sticky top-0 bg-blue-900 text-base text-white">
+              <thead className="sticky top-0 bg-blue-900 text-white font-extralight">
                 <tr>
-                  <th>#ID</th>
                   <th>Receipt Number</th>
                   <th>Transaction</th>
                   <th>Amount</th>
