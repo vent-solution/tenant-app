@@ -196,7 +196,8 @@ const BrokerFeeList: React.FC<Props> = () => {
               </tbody>
             </table>
           ) : (
-            <div className="w-ull h-full flex justify-center items-center">
+            <div className="w-ull h-full flex flex-wrap justify-center items-center">
+              <h1 className="text-xl w-full px-10 py-2">NO RESULT FOUNT</h1>
               <div
                 className="w-32 h-32"
                 style={{
