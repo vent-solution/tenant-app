@@ -17,7 +17,7 @@ import PaginationButtons from "../../global/PaginationButtons";
 import { AppDispatch } from "../../app/store";
 import { UserModel } from "../users/models/userModel";
 import BrokerFeesForm from "./BrokerFeesForm";
-import { FaExclamation } from "react-icons/fa6";
+import { FaCircleExclamation, FaExclamation } from "react-icons/fa6";
 
 interface Props {}
 const BrokerFeeList: React.FC<Props> = () => {
@@ -199,7 +199,7 @@ const BrokerFeeList: React.FC<Props> = () => {
           ) : (
             <div className="w-ull h-full flex flex-wrap justify-center items-center">
               <h1 className="text-xl w-full px-10 flex justify-center items-center">
-                <FaExclamationCircle className="text-red-500" />{" "}
+                <FaCircleExclamation className="text-red-500" />{" "}
                 <span>NO RESULT FOUND</span>
               </h1>
               <div
