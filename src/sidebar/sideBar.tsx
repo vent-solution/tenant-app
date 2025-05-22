@@ -123,7 +123,7 @@ let SideBar: React.FC<Props> = ({ navLinks }) => {
       <div
         className={`links bg-blue-950 lg:flex w-full ${
           !showLinks ? "hidden" : ""
-        } h-3/4 flex-wrap   overflow-auto text-gray-400 text-lg pl-2`}
+        } h-3/4 flex-wrap   overflow-auto text-gray-400 text-lg pl-1`}
       >
         <div className="py-2 w-full">
           {navLinks.map((navLink, index) => (
