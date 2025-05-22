@@ -48,7 +48,7 @@ let SideBar: React.FC<Props> = ({ navLinks }) => {
       } lg:h-dvh bg-blue-950 px-1 w-full  overflow-hidden`}
     >
       {/* SIDEBAR SECTION UPPER PART */}
-      <div className="w-full h-1/6 flex items-center justify-around py-3 px-2 text-center border-gray-400 border-b-2">
+      <div className="w-full h-1/6 flex items-center justify-around py-3 px-2 lg:px-10 text-center border-gray-400 border-b-2">
         <div className="logo  w-fit lg:w-1/3 font-bold">
           <img
             className="w-7 h-7"
