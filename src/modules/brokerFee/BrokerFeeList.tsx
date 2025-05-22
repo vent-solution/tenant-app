@@ -1,7 +1,7 @@
 import React, { useCallback, useEffect, useState } from "react";
 
 import { useDispatch, useSelector } from "react-redux";
-import { FaSearch } from "react-icons/fa";
+import { FaExclamationCircle, FaSearch } from "react-icons/fa";
 import AlertMessage from "../../other/alertMessage";
 import Preloader from "../../other/Preloader";
 import {
@@ -198,8 +198,9 @@ const BrokerFeeList: React.FC<Props> = () => {
             </table>
           ) : (
             <div className="w-ull h-full flex flex-wrap justify-center items-center">
-              <h1 className="text-xl w-full px-10 text-center">
-                <FaExclamation className="text-red-500" /> NO RESULT FOUND
+              <h1 className="text-xl w-full px-10 flex justify-center items-center">
+                <FaExclamationCircle className="text-red-500" />{" "}
+                <span>NO RESULT FOUND</span>
               </h1>
               <div
                 className="w-32 h-32"
