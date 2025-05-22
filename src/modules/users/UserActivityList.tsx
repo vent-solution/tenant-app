@@ -166,7 +166,7 @@ let UserActivityList: React.FC<Props> = ({ userId }) => {
         ) : (
           <div className="w-ull h-full flex justify-center items-center">
             <div
-              className="w-30 h-30"
+              className="w-32 h-32"
               style={{
                 background: "URL('/images/Ghost.gif')",
                 backgroundSize: "cover",

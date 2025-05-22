@@ -264,7 +264,7 @@ const Units: React.FC<Props> = () => {
         ) : (
           <div className="w-ull h-[calc(100vh-70px)] flex justify-center items-center">
             <div
-              className="w-30 h-30"
+              className="w-32 h-32"
               style={{
                 background: "URL('/images/Ghost.gif')",
                 backgroundSize: "cover",
