@@ -17,6 +17,7 @@ import PaginationButtons from "../../global/PaginationButtons";
 import { AppDispatch } from "../../app/store";
 import { UserModel } from "../users/models/userModel";
 import BrokerFeesForm from "./BrokerFeesForm";
+import { FaExclamation } from "react-icons/fa6";
 
 interface Props {}
 const BrokerFeeList: React.FC<Props> = () => {
@@ -197,7 +198,9 @@ const BrokerFeeList: React.FC<Props> = () => {
             </table>
           ) : (
             <div className="w-ull h-full flex flex-wrap justify-center items-center">
-              <h1 className="text-xl w-full px-10 py-2">NO RESULT FOUNT</h1>
+              <h1 className="text-xl w-full px-10 py-2 text-center">
+                <FaExclamation /> NO RESULT FOUND
+              </h1>
               <div
                 className="w-32 h-32"
                 style={{
