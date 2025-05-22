@@ -203,7 +203,7 @@ let BidsList: React.FC<Props> = () => {
           ) : (
             <div className="w-ull h-full flex justify-center items-center">
               <div
-                className="w-80 h-80"
+                className="w-30 h-30"
                 style={{
                   background: "URL('/images/Ghost.gif')",
                   backgroundSize: "cover",
