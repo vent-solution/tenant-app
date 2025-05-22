@@ -182,7 +182,7 @@ const ReceiptsList: React.FC<Props> = () => {
         >
           {filteredReceipts.length > 0 ? (
             <table className="border-2 w-full bg-white mt-2 lg:mt-0 shadow-lg">
-              <thead className="sticky top-0 bg-blue-900 text-white">
+              <thead className="sticky top-0 bg-blue-900 text-white text-ms">
                 <tr>
                   <th>Receipt Number</th>
                   <th>Transaction</th>
