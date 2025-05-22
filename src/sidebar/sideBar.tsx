@@ -112,7 +112,7 @@ let SideBar: React.FC<Props> = ({ navLinks }) => {
             dispatch(setUserAction({ userAction: handelLogOut }));
           }}
         >
-          <span className="p-2">
+          <span className="p-2 pl-0">
             <RiLogoutCircleLine />
           </span>
           {loading ? "Wait..." : "Log out"}
