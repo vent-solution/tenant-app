@@ -112,7 +112,7 @@ const ReceiptsPage: React.FC<Props> = () => {
 
   return (
     <div className="main flex relative w-full">
-      <div className="left lg:w-1/5 w-full md:w-full left-0 right-0 fixed lg:relative text-white z-50">
+      <div className="left lg:w-1/5 w-full md:w-full left-0 right-0 relative text-white z-50">
         <SideBar navLinks={navLinks} />
       </div>
       <div className="right lg:w-4/5 w-full z-0">
