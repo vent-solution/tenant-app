@@ -223,7 +223,7 @@ const FacilitiesForSale: React.FC<Props> = () => {
                     }));
                   }} // Change handler
                   options={countriesList} // Array of country options
-                  placeholder="Select a country"
+                  placeholder="Country"
                   isSearchable={true}
                 />
               </div>
