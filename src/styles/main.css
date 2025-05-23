@@ -23,9 +23,6 @@ table tr td {
   padding: 20px;
   border: 1px solid #efefef;
 }
-table tr th {
-  border: 2px 0 solid white;
-}
 
 .user {
   padding: 10px;
@@ -119,7 +116,7 @@ ul li.active {
   background-color: red;
   position: fixed;
   top: 0;
-  left: 0;
+  left: 20%;
   width: 100%;
   height: 100%;
   background-color: #ffffff; /* Background color of the preloader */
