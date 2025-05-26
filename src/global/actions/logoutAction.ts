@@ -37,13 +37,14 @@ export const logoutAction = async (
     };
 
     webSocketService.sendMessage("/app/logout", socketMessage);
+
+    window.location.href = `${process.env.REACT_APP_ENTRY_APP_URL}`;
+    localStorage.removeItem("dnap-user");
   } catch (error: any) {
     if (axios.isCancel(error)) {
       console.log("REQUEST CANCELLED: ", error.message);
     }
   } finally {
     setLoading(false);
-    window.location.href = "/";
-    localStorage.removeItem("dnap-user");
   }
 };

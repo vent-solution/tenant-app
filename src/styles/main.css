@@ -2,10 +2,10 @@
 @tailwind components;
 @tailwind utilities;
 * {
-  padding: 0%;
+  padding: 0;
   margin: 0;
   font-family: "poppins";
-  font-size: 97%;
+  font-size: 99%;
 }
 
 input,
@@ -13,6 +13,7 @@ select {
   font-size: 15px;
   font-weight: 500;
   padding: 10px;
+  color: #000000;
 }
 
 label > span {

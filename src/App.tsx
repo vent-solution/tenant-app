@@ -18,7 +18,6 @@ import { accommodationsTopicSubscription } from "./webSockets/subscriptionTopics
 import { getUserLocation } from "./global/api";
 import LandingPage from "./modules/LandingPage";
 import AccommodationsPage from "./modules/accommodations/AccommodationsPage";
-import { Navigate } from "react-router-dom";
 
 function App() {
   const [, setLoading] = useState(false);

@@ -7,7 +7,7 @@ import { AlertTypeEnum } from "../../global/enums/alertTypeEnum";
 import PaginationButtons from "../../global/PaginationButtons";
 import { FACILITY_CATEGORY_DATA } from "../../global/PreDefinedData/PreDefinedData";
 import { setAlert } from "../../other/alertSlice";
-import countriesList from "../../other/countriesList.json";
+import countriesList from "../../global/data/countriesList.json";
 import Select from "react-select";
 import { FacilitiesModel } from "../facilities/FacilityModel";
 import {

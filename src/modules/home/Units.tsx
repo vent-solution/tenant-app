@@ -11,7 +11,7 @@ import Unit from "./Unit";
 import { getAvailableUnits, resetAvailableUnits } from "./unitsSlice";
 import { AccommodationModel } from "../accommodations/AccommodationModel";
 import UnitDetails from "./UnitDetails";
-import countriesList from "../../other/countriesList.json";
+import countriesList from "../../global/data/countriesList.json";
 import Select from "react-select";
 
 interface Props {}

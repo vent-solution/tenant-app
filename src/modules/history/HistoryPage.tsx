@@ -36,12 +36,12 @@ const AccommodationsPage: React.FC<Props> = () => {
       active: false,
     },
 
-    // {
-    //   icon: <TbBrandBooking />,
-    //   name: "Bookings",
-    //   link: "/bookings",
-    //   active: false,
-    // },
+    {
+      icon: <TbBrandBooking />,
+      name: "Bookings",
+      link: "/bookings",
+      active: false,
+    },
 
     {
       icon: <FaHistory />,
@@ -50,12 +50,12 @@ const AccommodationsPage: React.FC<Props> = () => {
       active: true,
     },
 
-    {
-      icon: <IoDiamondSharp />,
-      name: "Broker fees",
-      link: "/brokerFees",
-      active: false,
-    },
+    // {
+    //   icon: <IoDiamondSharp />,
+    //   name: "Broker fees",
+    //   link: "/brokerFees",
+    //   active: false,
+    // },
 
     {
       icon: <FaReceipt />,

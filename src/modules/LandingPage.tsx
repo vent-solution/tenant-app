@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { useDispatch } from "react-redux";
 import axios from "axios";
@@ -6,9 +6,45 @@ import Preloader from "../other/Preloader";
 import { fetchData } from "../global/api";
 import { AppDispatch } from "../app/store";
 import { updateUser } from "./users/usersSlice";
+import TenantDetailsForm from "./auth/TenantDetailsForm";
+import { TenantCreationModel } from "./auth/TenantModel";
 
 const LandingPage: React.FC = () => {
   const { userId } = useParams();
+
+  const [isShowTenantDetailsForm, setIsShowTenantDetailsForm] = useState(false);
+
+  const [tenant, setTenant] = useState<TenantCreationModel>({
+    user: {
+      userId: Number(userId),
+    },
+
+    companyName: "",
+
+    idType: "",
+    nationalId: "",
+
+    nextOfKin: {
+      nokName: "",
+      nokEmail: "",
+      nokTelephone: "",
+      nokNationalId: "",
+      nokIdType: "",
+      addressType: "",
+      address: {
+        country: "",
+        state: "",
+        city: "",
+        county: "",
+        division: "",
+        parish: "",
+        zone: "",
+        street: "",
+        plotNumber: "",
+      },
+    },
+  });
+
   const dispatch = useDispatch<AppDispatch>();
   const navigate = useNavigate();
 
@@ -17,8 +53,8 @@ const LandingPage: React.FC = () => {
       try {
         const result = await fetchData(`/fetch-current-user/${id}`);
 
-        if (!result) {
-          window.location.href = "/";
+        if (!result || (result.data.status && result.data.status != "OK")) {
+          window.location.href = `${process.env.REACT_APP_ENTRY_APP_URL}`;
           return;
         }
 
@@ -37,25 +73,46 @@ const LandingPage: React.FC = () => {
           })
         );
 
-        navigate("/home");
+        const tenant = await fetchData(
+          `/fetch-tenant-bu-user-id/${result.data.userId}`
+        );
+        if (!tenant) {
+          window.location.href = `${process.env.REACT_APP_ENTRY_APP_URL}`;
+          return;
+        }
+
+        if (tenant.data.status && tenant.data.status != "OK") {
+          setIsShowTenantDetailsForm(true);
+          return;
+        } else {
+          navigate("/home");
+        }
       } catch (error) {
         if (axios.isCancel(error)) {
           console.log("Request canceled: ", error.message);
         } else {
           console.error("Error fetching user:", error);
         }
-        window.location.href = "/";
       }
     };
 
     const idNum = Number(userId);
     if (!userId || isNaN(idNum)) {
-      window.location.href = "/";
+      window.location.href = `${process.env.REACT_APP_ENTRY_APP_URL}`;
       return;
     }
 
     fetchCurrentUser(idNum);
   }, [userId, dispatch, navigate]);
+
+  if (isShowTenantDetailsForm)
+    return (
+      <TenantDetailsForm
+        tenant={tenant}
+        setTenant={setTenant}
+        setIsShowTenantDetailsForm={setIsShowTenantDetailsForm}
+      />
+    );
 
   return (
     <div className="main flex relative w-full">
