@@ -82,6 +82,7 @@ const LandingPage: React.FC = () => {
         }
 
         if (tenant.data.status && tenant.data.status != "OK") {
+          console.log(tenant.data);
           setIsShowTenantDetailsForm(true);
           return;
         } else {
