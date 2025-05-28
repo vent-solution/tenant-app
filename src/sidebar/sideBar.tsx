@@ -85,7 +85,11 @@ let SideBar: React.FC<Props> = ({ navLinks }) => {
         </div>
       </div>
 
-      <div className={`py-5 w-full   items-center justify-center flex`}>
+      <div
+        className={`py-5 w-full   items-center justify-center ${
+          showProfileButtons ? "flex" : "hidden"
+        }`}
+      >
         <button
           className=" hover:bg-blue-900 font-bold text-left px-5 text-white flex items-center my-1"
           onClick={() => navigate(`/users/${currentUser.userId}`)}
