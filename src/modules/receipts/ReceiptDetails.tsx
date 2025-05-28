@@ -3,7 +3,6 @@ import { ReceiptModel } from "./ReceiptModel";
 import { FormatMoney } from "../../global/actions/formatMoney";
 import QRCodeGenerator from "../../global/QRCode";
 import { FaDownload, FaPrint } from "react-icons/fa";
-import { fetchData } from "../../global/api";
 import axios from "axios";
 import { AppDispatch } from "../../app/store";
 import { useDispatch } from "react-redux";
@@ -46,10 +45,11 @@ const ReceiptDetails: React.FC<Props> = ({
 
     if (receipt) {
       try {
-        const result = await fetchData(
-          `/download-receipt/${Number(receipt.receiptId)}/${Number(
-            currentUser.userId
-          )}`
+        const result = await axios.get(
+          `${process.env.REACT_APP_API_URL}/download-receipt/${Number(
+            receipt.receiptId
+          )}/${Number(currentUser.userId)}`,
+          { responseType: "arraybuffer" }
         );
 
         if (result.data.status && result.data.status !== "OK") {
@@ -64,7 +64,7 @@ const ReceiptDetails: React.FC<Props> = ({
           return;
         }
 
-        if (result.status !== 2000) {
+        if (result.status !== 200) {
           dispatch(
             setAlert({
               status: true,
@@ -75,6 +75,15 @@ const ReceiptDetails: React.FC<Props> = ({
 
           return;
         }
+
+        // Create a blob from the PDF Stream and download it
+        const file = new Blob([result.data], { type: "application/pdf" }); // Create a blob from the PDF Stream
+        const fileURL = URL.createObjectURL(file); // Create a URL for the blob to be downloaded by the user later
+        const link = document.createElement("a"); // Create an anchor tag to trigger the download
+        link.href = fileURL; // Set the href attribute of the anchor tag to the URL of the blob to be downloaded
+        link.download = `Receipt-${receipt.receiptNumber}.pdf`; // Set the download attribute of the anchor tag to the name of the file to be downloaded  // Trigger the download by clicking the anchor tag
+        link.click(); // Remove the anchor tag from the DOM after the download is triggered   // Revoke the URL of the blob to free up memory
+        URL.revokeObjectURL(fileURL); // Dispatch an alert to the user to show that the download was successful
       } catch (error) {
         if (axios.isCancel(error)) {
           console.log("DOWNLOADING RECEIPT CANCELLED: ", error.message);
