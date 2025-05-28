@@ -31,7 +31,7 @@ let BookingRow: React.FC<Props> = ({ booking }) => {
     : "";
 
   return (
-    <tr className="cursor-pointer text-sm text-center border-y-2 hover:bg-gradient-to-b  hover:bg-gray-100">
+    <tr className="cursor-pointer text-sm text-start border-y-2 hover:bg-gradient-to-b  hover:bg-gray-100">
       <td className="py-5">{"BKG-" + booking.bookingId}</td>
       <td>
         {

@@ -87,7 +87,7 @@ const ReceiptDetails: React.FC<Props> = ({
 
   return (
     <div className="w-full h-svh bg-gray-100 flex justify-center items-center py-10">
-      <div className="w-full lg:w-1/2 h-[calc(100vh-50px)] m-auto overflow-auto p-5 px-10 flex flex-wrap justify-center items-center bg-white relative">
+      <div className="w-full lg:w-1/2 h-[calc(100vh-50px)] m-auto overflow-auto py-5 px-2 lg:px-10 flex flex-wrap justify-center items-center bg-white relative">
         <button
           className="absolute right-5 top-5 text-xl p-2 lg:hover:bg-red-600 lg:hover:text-white"
           onClick={toggleShowReceiptDetails}
@@ -97,12 +97,13 @@ const ReceiptDetails: React.FC<Props> = ({
         </button>
 
         <div
-          className="w-full m-auto py-5 p-10 flex flex-wrap justify-center"
+          className="w-full m-auto py-5 p-2 lg:p-10 flex flex-wrap justify-center"
           ref={contentRef} // Attach the ref to the section to print
         >
           <img
             src="/images/logo-colored-no-bg.png"
             alt="Logo"
+            className="w-14 lg:w-20 h-14 lg:h-20"
             height={60}
             width={60}
           />

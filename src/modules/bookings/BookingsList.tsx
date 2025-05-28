@@ -185,8 +185,8 @@ let BookingsList: React.FC<Props> = () => {
 
         <div className="lg:px-5 mb-12 h-[calc(100vh-170px)] overflow-auto pb-5 relative">
           {filteredBookings.length > 0 ? (
-            <table className="border-2 w-full bg-white text-center">
-              <thead className="sticky top-0 bg-blue-900 text-base text-white">
+            <table className="border-2 w-full bg-white text-start">
+              <thead className="sticky top-0 bg-blue-900 text-white">
                 <tr>
                   <th className="px-2">No.</th>
                   <th className="px-2">Accommodation</th>
