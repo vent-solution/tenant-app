@@ -101,7 +101,7 @@ const ReceiptDetails: React.FC<Props> = ({
           ref={contentRef} // Attach the ref to the section to print
         >
           <img
-            src="/images/logo-colored-no-bg.png"
+            src="/tenant/images/logo-colored-no-bg.png"
             alt="Logo"
             className="w-14 lg:w-20 h-14 lg:h-20"
             height={60}
