@@ -1,5 +1,4 @@
 import React, { useCallback, useEffect, useState } from "react";
-import { TenantModel } from "../../tenants/TenantModel";
 import { RxCross2 } from "react-icons/rx";
 import { useDispatch, useSelector } from "react-redux";
 import { getAccommodationByTenant } from "../accommodations/accommodationsSlice";
@@ -21,6 +20,7 @@ import { ACCOMMODATION_TYPE_DATA } from "../../../global/PreDefinedData/PreDefin
 import { AccommodationModel } from "../accommodations/AccommodationModel";
 import RentForm from "../../rent/RentForm";
 import { RentModel } from "../../rent/RentModel";
+import { TenantModel } from "../../auth/TenantModel";
 
 interface Props {
   tenant?: TenantModel;

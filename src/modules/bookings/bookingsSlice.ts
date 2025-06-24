@@ -60,19 +60,6 @@ const tenantBookingsSlice = createSlice({
   name: "tenantBookings",
   initialState,
   reducers: {
-    resetTenantBookings: {
-      reducer: (state, action: PayloadAction<StateModel>) => {
-        state.tenantBookings = action.payload.tenantBookings;
-        state.page = action.payload.page;
-        state.size = action.payload.size;
-        state.totalElements = action.payload.totalElements;
-        state.totalPages = action.payload.totalPages;
-      },
-      prepare: (tenantBookingsState: StateModel) => {
-        return { payload: tenantBookingsState };
-      },
-    },
-
     addNewBooking: {
       reducer: (state, action: PayloadAction<BookingModel>) => {
         state.tenantBookings.push(action.payload);
@@ -109,7 +96,5 @@ const tenantBookingsSlice = createSlice({
 
 export const getTenantBookings = (state: { tenantBookings: StateModel }) =>
   state.tenantBookings;
-
-export const { resetTenantBookings } = tenantBookingsSlice.actions;
 
 export default tenantBookingsSlice.reducer;

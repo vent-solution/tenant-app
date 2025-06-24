@@ -1,18 +1,16 @@
 import React, { useCallback, useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { AppDispatch } from "../../app/store";
-import axios from "axios";
-import { fetchData } from "../../global/api";
-import { AlertTypeEnum } from "../../global/enums/alertTypeEnum";
 import PaginationButtons from "../../global/PaginationButtons";
 import { ACCOMMODATION_TYPE_DATA } from "../../global/PreDefinedData/PreDefinedData";
-import { setAlert } from "../../other/alertSlice";
 import Unit from "./Unit";
-import { getAvailableUnits, resetAvailableUnits } from "./unitsSlice";
+import { fetchAvailableUnits, getAvailableUnits } from "./unitsSlice";
 import { AccommodationModel } from "../accommodations/AccommodationModel";
 import UnitDetails from "./UnitDetails";
 import countriesList from "../../global/data/countriesList.json";
 import Select from "react-select";
+import EmptyList from "../../global/EnptyList";
+import Preloader from "../../other/Preloader";
 
 interface Props {}
 
@@ -38,7 +36,8 @@ const Units: React.FC<Props> = () => {
   const dispatch = useDispatch<AppDispatch>();
 
   const availableUnitsState = useSelector(getAvailableUnits);
-  const { availableUnits, page, totalPages, size } = availableUnitsState;
+  const { availableUnits, page, totalPages, size, status } =
+    availableUnitsState;
 
   // Handle the change of selected country
   const handleCountryChange = (
@@ -53,56 +52,12 @@ const Units: React.FC<Props> = () => {
 
   // handle fetch next page
   const handleFetchNextPage = useCallback(async () => {
-    try {
-      const result = await fetchData(
-        `/fetch-available-units/${page + 1}/${size}`
-      );
-      console.log(result.data);
-      if (result.data.status && result.data.status !== "OK") {
-        dispatch(
-          setAlert({
-            message: result.data.message,
-            type: AlertTypeEnum.danger,
-            status: true,
-          })
-        );
-
-        return;
-      }
-      dispatch(resetAvailableUnits(result.data));
-    } catch (error) {
-      if (axios.isCancel(error)) {
-        console.log("FETCH AVAILABLE UNITS CANCELLED ", error.message);
-      }
-      console.error("Error fetching available units: ", error);
-    }
+    dispatch(fetchAvailableUnits({ page: page + 1, size: size }));
   }, [dispatch, page, size]);
 
   // handle fetch next page
   const handleFetchPreviousPage = useCallback(async () => {
-    try {
-      const result = await fetchData(
-        `/fetch-available-units/${page - 1}/${size}`
-      );
-
-      if (result.data.status && result.data.status !== "OK") {
-        dispatch(
-          setAlert({
-            message: result.data.message,
-            type: AlertTypeEnum.danger,
-            status: true,
-          })
-        );
-
-        return;
-      }
-      dispatch(resetAvailableUnits(result.data));
-    } catch (error) {
-      if (axios.isCancel(error)) {
-        console.log("FETCH AVAILABLE UNITS CANCELLED ", error.message);
-      }
-      console.error("Error fetching available units: ", error);
-    }
+    dispatch(fetchAvailableUnits({ page: page - 1, size: size }));
   }, [dispatch, page, size]);
 
   //filter accommodations depending on type, country and city
@@ -168,11 +123,15 @@ const Units: React.FC<Props> = () => {
     unitsFilter.country,
   ]);
 
+  if (status === "loading") return <Preloader />;
+
   if (isShowUnitDetails)
     return (
       <UnitDetails
         accommodationId={selectedAccommodationId}
         setIsShowUnitDetails={setIsShowUnitDetails}
+        setSelectedAccommodationId={setSelectedAccommodationId}
+        isShowUnitDetails={isShowUnitDetails}
       />
     );
 
@@ -250,7 +209,7 @@ const Units: React.FC<Props> = () => {
       <div className="lg:px-0 mb-12 overflow-auto pb-5 h-[calc(100svh-150px)] relative">
         {filteredUnits.length > 0 ? (
           <div className="w-full lg:w-full p-2 bg-white m-auto flex flex-wrap">
-            <div className="p-10 w-full overflow-auto flex flex-wrap">
+            <div className="py-10 px-2 lg:px-10 w-full overflow-auto flex flex-wrap">
               {filteredUnits.map((unit, index) => (
                 <Unit
                   key={index}
@@ -262,15 +221,7 @@ const Units: React.FC<Props> = () => {
             </div>
           </div>
         ) : (
-          <div className="w-ull h-[calc(100vh-70px)] flex justify-center items-center">
-            <div
-              className="w-32 h-32"
-              style={{
-                background: "URL('/images/Ghost.gif')",
-                backgroundSize: "cover",
-              }}
-            ></div>
-          </div>
+          <EmptyList itemName="unit" />
         )}
       </div>
 

@@ -6,8 +6,9 @@ import Preloader from "../other/Preloader";
 import { fetchData } from "../global/api";
 import { AppDispatch } from "../app/store";
 import { updateUser } from "./users/usersSlice";
-import TenantDetailsForm from "./auth/TenantDetailsForm";
 import { TenantCreationModel } from "./auth/TenantModel";
+import TenantDetailsForm from "./auth/TenantDetailsForm";
+import { UserStatusEnum } from "../global/enums/userStatusEnum";
 
 const LandingPage: React.FC = () => {
   const { userId } = useParams();
@@ -52,8 +53,12 @@ const LandingPage: React.FC = () => {
     const fetchCurrentUser = async (id: number) => {
       try {
         const result = await fetchData(`/fetch-current-user/${id}`);
+        if (!result || (result.data.status && result.data.status !== "OK")) {
+          window.location.href = `${process.env.REACT_APP_ENTRY_APP_URL}`;
+          return;
+        }
 
-        if (!result || (result.data.status && result.data.status != "OK")) {
+        if (result.data.userStatus !== UserStatusEnum.online) {
           window.location.href = `${process.env.REACT_APP_ENTRY_APP_URL}`;
           return;
         }
@@ -74,14 +79,14 @@ const LandingPage: React.FC = () => {
         );
 
         const tenant = await fetchData(
-          `/fetch-tenant-bu-user-id/${result.data.userId}`
+          `/fetch-tenant-by-user-id/${result.data.userId}`
         );
         if (!tenant) {
           window.location.href = `${process.env.REACT_APP_ENTRY_APP_URL}`;
           return;
         }
 
-        if (tenant.data.status && tenant.data.status != "OK") {
+        if (tenant.data.status && tenant.data.status !== "OK") {
           setIsShowTenantDetailsForm(true);
           return;
         } else {

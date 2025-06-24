@@ -1,4 +1,4 @@
-import { TenantModel } from "../tenants/TenantModel";
+import { TenantModel } from "../auth/TenantModel";
 
 export interface BrokerFeeModel {
   brokerFeeId?: string;

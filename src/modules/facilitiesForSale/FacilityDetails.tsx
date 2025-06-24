@@ -1,13 +1,10 @@
 import React, { useEffect, useState } from "react";
 import { useSelector } from "react-redux";
 import { RxCross1 } from "react-icons/rx";
-import { FACILITY_IMAGES_URL } from "../../global/filesUrls";
 import ImageSlider from "../../global/ImageSlide";
 import {
   BUSINESS_TYPE_DATA,
-  FACILITY_CATEGORY_DATA,
   FACILITY_RATING,
-  FACILITY_STATUS,
 } from "../../global/PreDefinedData/PreDefinedData";
 import { FormatMoney, FormatMoneyExt } from "../../global/actions/formatMoney";
 import { businessTypeEnum } from "../../global/enums/businessTypeEnum";
@@ -16,6 +13,8 @@ import { genderRestrictionEnum } from "../../global/enums/genderRestrictionEnum"
 import Amenity from "../facilities/Amenity";
 import { getCurrencyExchange } from "../../other/apis/CurrencyExchangeSlice";
 import { getFacilitiesForSaleById } from "./facilitiesForSaleSlice";
+
+import countriesList from "../../global/data/countriesList.json";
 
 interface Props {
   selectedFacilityId: Number | null;
@@ -69,19 +68,16 @@ let FacilityDetails: React.FC<Props> = ({
       </div>
 
       <div className="w-full lg:w-5/6  m-auto p-5">
-        <div className="w-full h-1/2 lg:h-3/4 flex flex-wrap items-center">
-          <div className="w-full lg:w-2/3 h-full">
+        <div className="w-full h-1/2 flex flex-wrap items-center">
+          <div className="w-full h-full">
             <ImageSlider
-              imageUrl={`${FACILITY_IMAGES_URL}/${facility?.facilityId}`}
+              imageUrl={`${process.env.REACT_APP_FACILITY_IMAGES_URL}/${facility?.facilityId}`}
               currentIndex={currentIndex}
               setCurrentIndex={setCurrentIndex}
-              images={facility?.facilityImages?.map((img, index) => ({
-                imageId: index + 1,
-                imageName: img.imageName,
-              }))}
+              images={facility?.facilityImages}
             />
           </div>
-          <div className="w-full lg:w-1/3 p-5">
+          {/* <div className="w-full lg:w-1/3 p-5">
             <div className="py-5">
               <h1 className="text-gray-600 text-lg">
                 For{" "}
@@ -127,7 +123,7 @@ let FacilityDetails: React.FC<Props> = ({
                 {facility?.description}
               </p>
             </div>
-          </div>
+          </div> */}
         </div>
         <div className="p-1 lg:p-y lg:pt-0 max-w-4xl mx-auto">
           {/* facility rating  */}
@@ -190,56 +186,20 @@ let FacilityDetails: React.FC<Props> = ({
                 {facility?.facilityLocation.country && (
                   <p className="text-sm text-black">
                     <b>Country: </b>
-                    <i>{facility?.facilityLocation.country}</i>
-                  </p>
-                )}
-                {facility?.facilityLocation.state && (
-                  <p className="text-sm text-black">
-                    <b>State: </b>
-                    <i>{facility?.facilityLocation.state}</i>
+                    <i>
+                      {
+                        countriesList.find(
+                          (country) =>
+                            country.value === facility?.facilityLocation.country
+                        )?.label
+                      }
+                    </i>
                   </p>
                 )}
                 {facility?.facilityLocation.city && (
                   <p className="text-sm text-black">
                     <b>City: </b>
                     <i>{facility?.facilityLocation.city}</i>
-                  </p>
-                )}
-                {facility?.facilityLocation.county && (
-                  <p className="text-sm text-black">
-                    <b>County: </b>
-                    <i>{facility?.facilityLocation.county}</i>
-                  </p>
-                )}
-                {facility?.facilityLocation.division && (
-                  <p className="text-sm text-black">
-                    <b>Division: </b>
-                    <i>{facility?.facilityLocation.division}</i>
-                  </p>
-                )}
-                {facility?.facilityLocation.parish && (
-                  <p className="text-sm text-black">
-                    <b>Parish: </b>
-                    <i>{facility?.facilityLocation.parish}</i>
-                  </p>
-                )}
-
-                {facility?.facilityLocation.zone && (
-                  <p className="text-sm text-black">
-                    <b>Zone: </b>
-                    <i>{facility?.facilityLocation.zone}</i>
-                  </p>
-                )}
-                {facility?.facilityLocation.street && (
-                  <p className="text-sm text-black">
-                    <b>Street: </b>
-                    <i>{facility?.facilityLocation.street}</i>
-                  </p>
-                )}
-                {facility?.facilityLocation.plotNumber && (
-                  <p className="text-sm text-black">
-                    <b>Plot number: </b>
-                    <i>{facility?.facilityLocation.plotNumber}</i>
                   </p>
                 )}
               </div>
@@ -255,29 +215,10 @@ let FacilityDetails: React.FC<Props> = ({
                     <i>{facility?.contact.telephone1}</i>
                   </p>
                 )}
-                {facility?.contact.telephone2 && (
-                  <p className="text-sm text-black">
-                    <b>Alternative telephone: </b>
-                    <i>{facility?.contact.telephone2}</i>
-                  </p>
-                )}
-                {facility?.contact.telephone2 && (
-                  <p className="text-sm text-black">
-                    <b>Alternative telephone: </b>
-                    <i>{facility?.contact.telephone2}</i>
-                  </p>
-                )}
                 {facility?.contact.email && (
                   <p className="text-sm text-black">
                     <b>Email: </b>
                     <i>{facility?.contact.email}</i>
-                  </p>
-                )}
-
-                {facility?.contact.fax && (
-                  <p className="text-sm text-black">
-                    <b>Fax: </b>
-                    <i>{facility?.contact.fax}</i>
                   </p>
                 )}
               </div>

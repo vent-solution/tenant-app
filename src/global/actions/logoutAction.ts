@@ -9,14 +9,29 @@ import { UserModel } from "../../modules/users/models/userModel";
 import { webSocketService } from "../../webSockets/socketService";
 
 export const logoutAction = async (
-  current_user: UserModel,
   setLoading: React.Dispatch<React.SetStateAction<boolean>>,
   dispatch: AppDispatch
 ) => {
+  const user: UserModel = JSON.parse(
+    localStorage.getItem("dnap-user") as string
+  );
   try {
     setLoading(true);
 
-    const result = await postData(`/log-out/${current_user.userId}`, {});
+    const result = await postData(`/log-out/${user.userId}`, {});
+
+    if (!result) {
+      dispatch(
+        setAlert({
+          type: AlertTypeEnum.danger,
+          message: "INTERNAL SERVER ERROR!",
+          status: true,
+        })
+      );
+
+      return;
+    }
+
     if (result.data.status && result.data.status !== "OK") {
       dispatch(
         setAlert({
@@ -30,8 +45,8 @@ export const logoutAction = async (
     }
 
     const socketMessage: SocketMessageModel = {
-      userId: Number(current_user.userId),
-      userRole: String(current_user.userRole),
+      userId: Number(user.userId),
+      userRole: String(user.userRole),
       content: null,
       activity: UserActivity.logout,
     };

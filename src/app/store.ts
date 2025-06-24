@@ -11,8 +11,6 @@ import facilitiesReducer from "../modules/facilities/FacilitiesSlice";
 import currencyExchangeReducer from "../other/apis/CurrencyExchangeSlice";
 import facilityRentReducer from "../modules/facilities/rent/FacilityRentSlice";
 import facilityBookingsReducer from "../modules/facilities/bookings/bookingsSlice";
-import landlordTenantsReducer from "../modules/tenants/TenantsSlice";
-import otherFacilitiesReducer from "../modules/market/otherFacilitiesSlice";
 import tenantHistoryReducer from "../modules/history/HistorySlice";
 import availableUnitsReducer from "../modules/home/unitsSlice";
 import facilitiesForSaleReducer from "../modules/facilitiesForSale/facilitiesForSaleSlice";
@@ -21,6 +19,7 @@ import brokerFeesReducer from "../modules/brokerFee/BrokerFeesSlice";
 import receiptsReducer from "../modules/receipts/receiptsSlice";
 import accommodationRentReducer from "../modules/accommodations/AccommodationRentSlice";
 import tenantAccommodationsReducer from "../modules/accommodations/tenantAccommodationsSlice";
+import facilityAccommodationsReducer from "../modules/home/moreFacilityUnitsSlice";
 
 export const store = configureStore({
   reducer: {
@@ -37,8 +36,6 @@ export const store = configureStore({
     accommodationRent: accommodationRentReducer,
     facilityRent: facilityRentReducer,
     facilityBookings: facilityBookingsReducer,
-    landlordTenants: landlordTenantsReducer,
-    otherFacilities: otherFacilitiesReducer,
     tenantHistory: tenantHistoryReducer,
     availableUnits: availableUnitsReducer,
     facilitiesForSale: facilitiesForSaleReducer,
@@ -46,6 +43,7 @@ export const store = configureStore({
     brokerFees: brokerFeesReducer,
     receipts: receiptsReducer,
     tenantAccommodations: tenantAccommodationsReducer,
+    facilityAccommodations: facilityAccommodationsReducer,
   },
 });
 

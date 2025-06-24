@@ -22,7 +22,10 @@ label > span {
 
 table tr td {
   padding: 20px;
-  border: 1px solid #efefef;
+  border: 1px 0 solid #efefef;
+}
+table tr th {
+  border-left: 1px solid #ffffff;
 }
 
 .user {
@@ -110,20 +113,6 @@ ul li.active {
 
 .custom-tooltip {
   box-shadow: 0 0 20px black;
-}
-
-/* Preloader.css */
-.preloader {
-  background-color: red;
-  position: fixed;
-  top: 0;
-  width: 100%;
-  height: 100%;
-  background-color: #ffffff; /* Background color of the preloader */
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  z-index: 9999; /* Ensure it's on top of everything else */
 }
 
 .cube {

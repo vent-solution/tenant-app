@@ -8,13 +8,12 @@ import { PiBuildingsFill } from "react-icons/pi";
 import HistoryList from "./HistoryList";
 import { FaHistory, FaReceipt } from "react-icons/fa";
 import { TbBrandBooking } from "react-icons/tb";
-import { IoDiamondSharp } from "react-icons/io5";
 
 interface Props {}
 
 const AccommodationsPage: React.FC<Props> = () => {
   // LOCAL STATES
-  const [navLinks] = useState<NavLinkModel[]>([
+  const [navLinks, setNavLinks] = useState<NavLinkModel[]>([
     {
       icon: <MdDashboard />,
       name: "Home",
@@ -95,7 +94,7 @@ const AccommodationsPage: React.FC<Props> = () => {
   return (
     <div className="main flex relative w-full">
       <div className="left lg:w-1/5 w-full md:w-full left-0 right-0 fixed lg:relative text-white z-50">
-        <SideBar navLinks={navLinks} />
+        <SideBar navLinks={navLinks} setNavLinks={setNavLinks} />
       </div>
       <div className="right lg:w-4/5 w-full z-0">
         <HistoryList />

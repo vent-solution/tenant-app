@@ -10,7 +10,7 @@ interface UpdateModel {
 // users state type
 interface UserState {
   tenantUser: UserModel;
-  status: string;
+  status: "idle" | "loading" | "error" | "success";
   error: string | null;
 }
 
@@ -40,7 +40,7 @@ const userSlice = createSlice({
     },
   },
 });
-export const getUser = (state: { user: UserState }) => state.user.tenantUser;
+export const getUser = (state: { user: UserState }) => state.user;
 
 export const { updateUser } = userSlice.actions;
 

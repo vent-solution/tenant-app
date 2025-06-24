@@ -1,7 +1,5 @@
 import React, { useCallback, useEffect, useState } from "react";
-import { useSelector } from "react-redux";
 import { UserRoleEnum } from "../../global/enums/userRoleEnum";
-import { getUser, updateUser } from "./usersSlice";
 import AddUserForm from "./addUserForm";
 import axios from "axios";
 import { fetchData } from "../../global/api";
@@ -11,7 +9,7 @@ interface Props {
   userId: number;
 }
 
-const UserProfileDetails: React.FC<Props> = ({}) => {
+const UserProfileDetails: React.FC<Props> = ({ userId }) => {
   const [isShowForm, setIsShowForm] = useState<boolean>(false);
 
   const [user, setUser] = useState<UserModel | null>(null);
@@ -34,8 +32,8 @@ const UserProfileDetails: React.FC<Props> = ({}) => {
       }
     };
 
-    fetchCurrentUser(Number(currentUser.userId));
-  }, []);
+    fetchCurrentUser(Number(userId));
+  }, [userId]);
 
   // toggle show user form
   const toggleShowUserForm = useCallback(() => {
@@ -44,7 +42,13 @@ const UserProfileDetails: React.FC<Props> = ({}) => {
 
   // render  user form if the show form is true
   if (isShowForm)
-    return <AddUserForm toggleShowForm={toggleShowUserForm} userData={user} />;
+    return (
+      <AddUserForm
+        toggleShowForm={toggleShowUserForm}
+        userData={user}
+        setUserData={setUser}
+      />
+    );
 
   return (
     <div className="w-full h-[calc(100vh-100px)] overflow-auto bg-gray-100">

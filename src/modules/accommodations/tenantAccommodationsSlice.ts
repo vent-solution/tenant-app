@@ -45,7 +45,7 @@ export const fetchAccommodationsByTenant = createAsyncThunk(
         `/fetch-accommodations-by-tenant/${userId}/${page}/${size}`
       );
 
-      console.log(result, userId);
+      console.log(result.data);
 
       if (!result) {
         return initialState;
@@ -83,6 +83,10 @@ export const fetchAccommodationOnCheckIn = createAsyncThunk(
         `/fetch-accommodation-on-check-in/${accommodationId}/${tenantId}/${status}`
       );
 
+      if (!result) {
+        return initialState;
+      }
+
       if (result.status !== 200) {
         return initialState;
       }
@@ -100,21 +104,6 @@ const tenantAccommodationsSlice = createSlice({
   name: "tenantAccommodations",
   initialState,
   reducers: {
-    // reseting the list of existing accommodations
-    resetTenantAccommodations: {
-      reducer: (state, action: PayloadAction<StateModel>) => {
-        state.tenantAccommodations = action.payload.tenantAccommodations;
-        state.page = action.payload.page;
-        state.size = action.payload.size;
-        state.totalElements = action.payload.totalElements;
-        state.totalPages = action.payload.totalPages;
-      },
-
-      prepare: (accommodationsState: StateModel) => {
-        return { payload: accommodationsState };
-      },
-    },
-
     //adding a new accommodation
     addAccommodation: {
       reducer: (state, action: PayloadAction<HistoryModel>) => {
@@ -146,8 +135,6 @@ const tenantAccommodationsSlice = createSlice({
             ...changes,
           };
         }
-
-        console.log(state.tenantAccommodations[accommodationIndex]);
       },
 
       prepare: (accommodation: UpdateModel) => {
@@ -241,11 +228,7 @@ export const getAccommodationByTenant =
         )
     );
 
-export const {
-  resetTenantAccommodations,
-  addAccommodation,
-  updateAccommodation,
-  deleteAccommodation,
-} = tenantAccommodationsSlice.actions;
+export const { addAccommodation, updateAccommodation, deleteAccommodation } =
+  tenantAccommodationsSlice.actions;
 
 export default tenantAccommodationsSlice.reducer;

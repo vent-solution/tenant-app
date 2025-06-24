@@ -3,13 +3,18 @@ import { format, formatDistanceToNow, parseISO } from "date-fns";
 import { FormatMoney } from "../../global/actions/formatMoney";
 import { PAYMENT_TYPE_DATA } from "../../global/PreDefinedData/PreDefinedData";
 import { RentModel } from "../rent/RentModel";
+import convertCurrency, {
+  convertCurrency2,
+} from "../../global/actions/currencyConverter";
 
 interface Props {
   rent: RentModel;
 }
 
 const AccommodationRentRow: React.FC<Props> = ({ rent }) => {
-  const registeredDate = rent.dateCreated ? parseISO(rent.dateCreated) : null;
+  const registeredDate = rent.transactionDate
+    ? parseISO(rent.transactionDate)
+    : null;
 
   const registered = registeredDate
     ? Date.now() - registeredDate.getTime() > 7 * 24 * 60 * 60 * 1000 // 7 days in milliseconds
@@ -25,7 +30,7 @@ const AccommodationRentRow: React.FC<Props> = ({ rent }) => {
       "";
 
   return (
-    <tr className="border-y-blue-500 border-2 hover:bg-blue-100">
+    <tr className="border-y-blue-500 border-2 hover:bg-blue-100 text-start">
       <td className="py-2">{"TNT-" + rent.tenant.tenantId}</td>
       {!rent.tenant.companyName && (
         <td>{rent.tenant.user.firstName + " " + rent.tenant.user.lastName}</td>
@@ -34,7 +39,11 @@ const AccommodationRentRow: React.FC<Props> = ({ rent }) => {
       {rent.tenant.companyName && <td>{rent.tenant.companyName}</td>}
       <td className="font-bold font-mono">
         {FormatMoney(
-          rent.amount,
+          convertCurrency2(
+            String(rent.facilityCurrencyRate),
+            String(rent.dollarRate),
+            rent.amount
+          ),
           2,
           rent.accommodation.facility.preferedCurrency
         )}

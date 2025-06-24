@@ -1,6 +1,5 @@
 import { AccommodationModel } from "../accommodations/AccommodationModel";
-import { FacilitiesModel } from "../facilities/FacilityModel";
-import { TenantModel } from "../tenants/TenantModel";
+import { TenantModel } from "../auth/TenantModel";
 
 export interface BookingModel {
   bookingId?: number;

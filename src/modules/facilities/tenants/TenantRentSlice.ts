@@ -43,7 +43,10 @@ export const fetchRentByTenantAndAccommodation = createAsyncThunk(
         )}/${page}/${size}`
       );
 
+      console.log(result);
+
       if (
+        !result ||
         (result.data.status && result.data.statsu !== "OK") ||
         result.status !== 200
       ) {

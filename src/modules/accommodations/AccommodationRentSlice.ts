@@ -4,7 +4,7 @@ import { fetchData } from "../../global/api";
 import { RentModel } from "../rent/RentModel";
 
 interface StateModel {
-  accommodationRent: RentModel[];
+  tenantRent: RentModel[];
   page: number;
   size: number;
   totalElements: number;
@@ -14,7 +14,7 @@ interface StateModel {
 }
 
 const initialState: StateModel = {
-  accommodationRent: [],
+  tenantRent: [],
   page: 0,
   size: 0,
   totalElements: 0,
@@ -26,18 +26,24 @@ const initialState: StateModel = {
 export const fetchAccommodationRent = createAsyncThunk(
   "fetchAccommodationRent",
   async ({
+    tenantId,
     accommodationId,
     page,
     size,
   }: {
+    tenantId: number;
     accommodationId: number;
     page: number;
     size: number;
   }) => {
     try {
       const result = await fetchData(
-        `/fetch-rent-by-accommodation/${accommodationId}/${page}/${size}`
+        `/fetch-rent-by-tenant-and-accommodation/${tenantId}/${accommodationId}/${page}/${size}`
       );
+
+      console.log(result.data);
+
+      if (!result) return initialState;
 
       if (
         (result.data.status && result.data.status !== "OK") ||
@@ -60,7 +66,7 @@ const accommodationRentSlice = createSlice({
   reducers: {
     resetAccommodationRent: {
       reducer: (state, action: PayloadAction<StateModel>) => {
-        state.accommodationRent = action.payload.accommodationRent;
+        state.tenantRent = action.payload.tenantRent;
         state.page = action.payload.page;
         state.size = action.payload.size;
         state.totalElements = action.payload.totalElements;
@@ -74,7 +80,7 @@ const accommodationRentSlice = createSlice({
 
     addNewRentRecord: {
       reducer: (state, action: PayloadAction<RentModel>) => {
-        state.accommodationRent.push(action.payload);
+        state.tenantRent.push(action.payload);
       },
       prepare: (rentRecord: RentModel) => {
         return { payload: rentRecord };
@@ -91,7 +97,7 @@ const accommodationRentSlice = createSlice({
       .addCase(
         fetchAccommodationRent.fulfilled,
         (state, action: PayloadAction<StateModel>) => {
-          state.accommodationRent = action.payload.accommodationRent;
+          state.tenantRent = action.payload.tenantRent;
           state.page = action.payload.page;
           state.size = action.payload.size;
           state.totalElements = action.payload.totalElements;

@@ -18,18 +18,20 @@ import { FormatMoney } from "../../global/actions/formatMoney";
 import { fetchData } from "../../global/api";
 
 import { RentModel } from "../rent/RentModel";
-import { TenantModel } from "../tenants/TenantModel";
 import RentForm from "../rent/RentForm";
 import { AccommodationModel } from "../accommodations/AccommodationModel";
 import AccommodationRentRow from "../accommodations/AccommodationRentRow";
 import {
-  getAccommodationRent,
   fetchAccommodationRent,
+  getAccommodationRent,
   resetAccommodationRent,
 } from "../accommodations/AccommodationRentSlice";
+import { TenantModel } from "../auth/TenantModel";
+import { HistoryModel } from "./HistoryModel";
+import { parseISO } from "date-fns";
 
 interface Props {
-  accommodation?: AccommodationModel;
+  history: HistoryModel | null;
   toggleShowAccommodationDetails: () => void;
 }
 
@@ -38,7 +40,7 @@ const currentUser: UserModel = JSON.parse(
 );
 
 let HistoryDetails: React.FC<Props> = ({
-  accommodation,
+  history,
   toggleShowAccommodationDetails,
 }) => {
   const [currencyNames, setCurrencyNames] = useState<string[]>([]);
@@ -54,7 +56,7 @@ let HistoryDetails: React.FC<Props> = ({
 
   const dispatch = useDispatch<AppDispatch>();
   const accommodationRentState = useSelector(getAccommodationRent);
-  const { accommodationRent, page, size, totalElements, totalPages } =
+  const { tenantRent, page, size, totalElements, totalPages } =
     accommodationRentState;
 
   const currencyState = useSelector(getCurrencyExchange);
@@ -67,34 +69,35 @@ let HistoryDetails: React.FC<Props> = ({
 
   // set the converted money
   useEffect(() => {
-    const fac = String(accommodation?.facility.preferedCurrency);
+    const fac = String(history?.accommodation.facility.preferedCurrency);
     setConvertedPrice(
       (Number(currencyState[desiredCurrency]) / Number(currencyState[fac])) *
-        Number(accommodation?.price)
+        Number(history?.accommodation.price)
     );
   }, [
     currencyState,
     desiredCurrency,
-    accommodation?.facility.preferedCurrency,
-    accommodation?.price,
+    history?.accommodation.facility.preferedCurrency,
+    history?.accommodation.price,
   ]);
 
   // fetch accommodation rent records
   useEffect(() => {
     dispatch(
       fetchAccommodationRent({
-        accommodationId: Number(accommodation?.accommodationId),
+        tenantId: Number(history?.tenant.tenantId),
+        accommodationId: Number(history?.accommodation.accommodationId),
         page: 0,
         size: 15,
       })
     );
-  }, [accommodation?.accommodationId, dispatch]);
+  }, [history?.accommodation.accommodationId, dispatch]);
 
   // filter rent records
   useEffect(() => {
     const originalAccommodationRent =
-      accommodationRent.length > 0
-        ? [...accommodationRent]
+      tenantRent.length > 0
+        ? [...tenantRent]
             .filter(
               (rnt) =>
                 Number(rnt.tenant.user.userId) === Number(currentUser.userId)
@@ -146,14 +149,14 @@ let HistoryDetails: React.FC<Props> = ({
         })
       );
     }
-  }, [searchString, accommodationRent]);
+  }, [searchString, tenantRent]);
 
   // handle fetch next page
   const handleFetchNextPage = useCallback(async () => {
     try {
       const result = await fetchData(
         `/fetch-rent-by-accommodation/${Number(
-          accommodation?.accommodationId
+          history?.accommodation.accommodationId
         )}/${page + 1}/${size}`
       );
       dispatch(resetAccommodationRent(result.data));
@@ -163,14 +166,14 @@ let HistoryDetails: React.FC<Props> = ({
       }
       console.error("Error fetching rent: ", error);
     }
-  }, [dispatch, page, size, accommodation?.accommodationId]);
+  }, [dispatch, page, size, history?.accommodation.accommodationId]);
 
   // handle fetch previous page
   const handleFetchPreviousPage = useCallback(async () => {
     try {
       const result = await fetchData(
         `/fetch-rent-by-accommodation/${Number(
-          accommodation?.accommodationId
+          history?.accommodation.accommodationId
         )}/${page - 1}/${size}`
       );
       dispatch(resetAccommodationRent(result.data));
@@ -180,13 +183,12 @@ let HistoryDetails: React.FC<Props> = ({
       }
       console.error("Error fetching rent: ", error);
     }
-  }, [dispatch, page, size, accommodation?.accommodationId]);
+  }, [dispatch, page, size, history?.accommodation.accommodationId]);
 
   if (showRentForm) {
-    const currentUser = JSON.parse(localStorage.getItem("dnap-user") as string);
     return (
       <RentForm
-        accommodationId={accommodation?.accommodationId}
+        accommodationId={history?.accommodation.accommodationId}
         setIsShowRentForm={setShowRentForm}
       />
     );
@@ -194,10 +196,10 @@ let HistoryDetails: React.FC<Props> = ({
 
   return (
     <div className="w-full h-fit p-0 relative mt-24 lg:mt-0">
-      <div className="w-full lg:w-5/6 m-auto h-full shadow-xl">
+      <div className="w-full lg:w-full m-auto h-full shadow-xl">
         <div className="w-full p-2 flex justify-between items-center sticky top-0  shadow-lg z-10 bg-white">
           <h1 className="text-lg font-bold">
-            {accommodation?.accommodationNumber}
+            {history?.accommodation.accommodationNumber}
           </h1>
           <div className="price flex">
             <select
@@ -209,10 +211,10 @@ let HistoryDetails: React.FC<Props> = ({
               }
             >
               <option
-                value={accommodation?.facility.preferedCurrency}
+                value={history?.accommodation.facility.preferedCurrency}
                 className="bg-gray-200"
               >
-                {accommodation?.facility.preferedCurrency}
+                {history?.accommodation.facility.preferedCurrency}
               </option>
               {currencyNames.map((crn) => (
                 <option value={crn} className="bg-gray-200">
@@ -223,11 +225,11 @@ let HistoryDetails: React.FC<Props> = ({
             <h1 className="text-lg font-bold font-mono text-black">
               {FormatMoney(
                 !desiredCurrency
-                  ? Number(accommodation?.price)
+                  ? Number(history?.accommodation.price)
                   : Number(convertedPrice),
                 2,
                 !desiredCurrency
-                  ? String(accommodation?.facility.preferedCurrency)
+                  ? String(history?.accommodation.facility.preferedCurrency)
                   : desiredCurrency
               )}
             </h1>
@@ -249,29 +251,43 @@ let HistoryDetails: React.FC<Props> = ({
               <div className="p-2 flex justify-start items-center w-full">
                 <p className="text-sm flex flex-wrap">
                   <span className="w-full">
-                    <b>ID: </b>
-                    <span>{"FAC-" + accommodation?.facility.facilityId}</span>
+                    <b>ID/Number: </b>
+                    <span>
+                      {"FAC-" + history?.accommodation.facility.facilityId}
+                    </span>
                   </span>
                   <span className="w-full">
                     <b>Name: </b>
-                    <span>{accommodation?.facility.facilityName}</span>
+                    <span>{history?.accommodation.facility.facilityName}</span>
                   </span>
                   <span className="w-full">
                     <b>Location: </b>
                     <span>
-                      {accommodation?.facility.facilityLocation.city +
+                      {history?.accommodation.facility.facilityLocation.city +
                         " " +
-                        accommodation?.facility.facilityLocation.country}
+                        history?.accommodation.facility.facilityLocation
+                          .country}
+                    </span>
+                  </span>
+                  <span className="w-full">
+                    <b>Primary address: </b>
+                    <span>
+                      {
+                        history?.accommodation.facility.facilityLocation
+                          .primaryAddress
+                      }
                     </span>
                   </span>
                   <span className="w-full">
                     <b>Tel: </b>
-                    <span>{accommodation?.facility.contact.telephone1}</span>
+                    <span>
+                      {history?.accommodation.facility.contact.telephone1}
+                    </span>
                   </span>
 
                   <span className="w-full">
                     <b>Email: </b>
-                    <span>{accommodation?.facility.contact.email}</span>
+                    <span>{history?.accommodation.facility.contact.email}</span>
                   </span>
                 </p>
               </div>
@@ -283,16 +299,12 @@ let HistoryDetails: React.FC<Props> = ({
               <div className="p-2 flex justify-start items-center w-full">
                 <p className="text-sm flex flex-wrap">
                   <span className="w-full">
-                    <b>ID: </b>
-                    <span>{"ACC-" + accommodation?.accommodationId}</span>
-                  </span>
-                  <span className="w-full">
                     <b>Number: </b>
-                    <span>{accommodation?.accommodationNumber}</span>
+                    <span>{history?.accommodation.accommodationNumber}</span>
                   </span>
                   <span className="w-full">
                     <b>Floor: </b>
-                    <span>{accommodation?.floor}</span>
+                    <span>{history?.accommodation.floor}</span>
                   </span>
                   <span className="w-full">
                     <b>Type: </b>
@@ -300,12 +312,13 @@ let HistoryDetails: React.FC<Props> = ({
                       {
                         ACCOMMODATION_TYPE_DATA.find(
                           (type) =>
-                            type.value === accommodation?.accommodationType
+                            type.value ===
+                            history?.accommodation.accommodationType
                         )?.label
                       }
                     </span>
                   </span>
-                  {accommodation?.accommodationCategory && (
+                  {history?.accommodation.accommodationCategory && (
                     <span className="w-full">
                       <b>Category: </b>
                       <span>
@@ -313,17 +326,17 @@ let HistoryDetails: React.FC<Props> = ({
                           ACCOMMODATION_CATEGORY.find(
                             (category) =>
                               category.value ===
-                              accommodation?.accommodationCategory
+                              history?.accommodation.accommodationCategory
                           )?.label
                         }
                       </span>
                     </span>
                   )}
 
-                  {accommodation?.capacity && (
+                  {history?.accommodation.capacity && (
                     <span className="w-full">
                       <b>Capacity: </b>
-                      <span>{accommodation?.capacity}</span>
+                      <span>{history?.accommodation.capacity}</span>
                     </span>
                   )}
 
@@ -332,25 +345,49 @@ let HistoryDetails: React.FC<Props> = ({
                     <span className="font-mono">
                       {FormatMoney(
                         !desiredCurrency
-                          ? Number(accommodation?.price)
+                          ? Number(history?.accommodation.price)
                           : Number(convertedPrice),
                         2,
                         !desiredCurrency
-                          ? String(accommodation?.facility.preferedCurrency)
+                          ? String(
+                              history?.accommodation.facility.preferedCurrency
+                            )
                           : desiredCurrency
                       )}{" "}
                       /{" "}
                       {
                         PAYMENT_PARTERN.find(
                           (parttern) =>
-                            parttern.value === accommodation?.paymentPartten
+                            parttern.value ===
+                            history?.accommodation.paymentPartten
                         )?.label
                       }
                     </span>
                   </span>
                   <span className="w-full">
                     <b>Status: </b>
-                    <span>{accommodation?.availability}</span>
+                    <span>{history?.accommodation.availability}</span>
+                  </span>
+                </p>
+              </div>
+            </div>
+
+            {/* time lines */}
+            <div className="p-4 w-full  shadow-lg">
+              <h2 className="text-xl font-bold">Timelines</h2>
+              <div className="p-2 flex justify-start items-center w-full">
+                <p className="text-sm flex flex-wrap">
+                  <span className="w-full">
+                    <b>CheckIn: </b>
+                    <span>
+                      {parseISO(String(history?.checkIn)).toDateString()}
+                    </span>
+                  </span>
+                  <span className="w-full">
+                    <b>CheckOut: </b>
+                    <span>
+                      {parseISO(String(history?.checkOut)).toDateString()}
+                    </span>
                   </span>
                 </p>
               </div>
@@ -364,12 +401,12 @@ let HistoryDetails: React.FC<Props> = ({
                 Payment records
               </h2>
             </div>
-            <div className="flex w-full items-center justify-end px-10 py-2">
-              <h3 className="px-10 text-sm font-bold">
+            <div className="flex w-full items-center justify-between lg:justify-end px-2 lg:px-10 py-2">
+              <h3 className="px-2 lg:px-10 text-sm font-bold">
                 {filteredAccommodationRent.length + "/" + totalElements}
               </h3>
               <div
-                className={` rounded-full  bg-white flex justify-between border-gray-400 border-2 w-3/4 lg:w-2/4 h-3/4 mt-0 lg:mt-0`}
+                className={` rounded-full  bg-white flex justify-between border-gray-400 border-2 w-5/6 lg:w-1/2 h-3/4 mt-0 lg:mt-0`}
               >
                 <input
                   type="text"

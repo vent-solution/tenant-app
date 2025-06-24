@@ -19,15 +19,26 @@ import { getAccommodationById } from "../accommodations/tenantAccommodationsSlic
 import { CreationRentModel } from "./RentModel";
 import { useNavigate } from "react-router-dom";
 import { addNewRentRecord } from "../accommodations/AccommodationRentSlice";
+import { getCurrencyExchange } from "../../other/apis/CurrencyExchangeSlice";
+import convertCurrency from "../../global/actions/currencyConverter";
 
 interface Props {
   accommodationId?: number;
+
+  tenantId?: number;
   setIsShowRentForm: React.Dispatch<React.SetStateAction<boolean>>;
 }
 
-let RentForm: React.FC<Props> = ({ accommodationId, setIsShowRentForm }) => {
+let RentForm: React.FC<Props> = ({
+  accommodationId,
+  tenantId,
+  setIsShowRentForm,
+}) => {
   const [rentData, setRentData] = useState<CreationRentModel>({
+    tenant: { tenantId: Number(tenantId) },
     amount: null,
+    dollarRate: null,
+    facilityCurrencyRate: null,
     currency: null,
     paymentType: null,
     transactionDate: null,
@@ -47,6 +58,8 @@ let RentForm: React.FC<Props> = ({ accommodationId, setIsShowRentForm }) => {
   );
 
   const accommodation = accommodationState?.accommodation;
+
+  const currencyState = useSelector(getCurrencyExchange);
 
   // SET THE DEFAULT BOOKING DATA
   useEffect(() => {
@@ -206,7 +219,7 @@ let RentForm: React.FC<Props> = ({ accommodationId, setIsShowRentForm }) => {
         </h2>
 
         <form
-          className="w-full lg:w-1/3 m-auto p-5 border"
+          className="w-full lg:w-1/2 m-auto p-5 border"
           onSubmit={(e: FormEvent<HTMLFormElement>) => e.preventDefault()}
         >
           <div className="form-group w-full py-5">
@@ -222,11 +235,25 @@ let RentForm: React.FC<Props> = ({ accommodationId, setIsShowRentForm }) => {
               id="rentAmount"
               name="rentAmount"
               className="w-full"
-              value={Number(rentData.amount)}
               onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
                 setRentData((prev) => ({
                   ...prev,
-                  amount: Number(e.target.value),
+                  amount: Number(
+                    convertCurrency(
+                      currencyState,
+                      "usd",
+
+                      String(accommodation?.facility.preferedCurrency),
+
+                      Number(e.target.value)
+                    )
+                  ),
+                  dollarRate: Number(currencyState["usd"]),
+                  facilityCurrencyRate: Number(
+                    currencyState[
+                      String(accommodation?.facility.preferedCurrency)
+                    ]
+                  ),
                 }))
               }
             />
@@ -257,7 +284,7 @@ let RentForm: React.FC<Props> = ({ accommodationId, setIsShowRentForm }) => {
                 checked={rentData.paymentType === PaymentTypeEnum.onlineMomo}
               />
               <img
-                src="/FILES/IMAGES/payment-method-images/mtn-momo.png"
+                src="/tenant/payment-method-images/mtn-momo.png"
                 alt=""
                 height={50}
                 width={100}
@@ -285,7 +312,7 @@ let RentForm: React.FC<Props> = ({ accommodationId, setIsShowRentForm }) => {
                 }
               />
               <img
-                src="/FILES/IMAGES/payment-method-images/airtel-money.png"
+                src="/tenant/payment-method-images/airtel-money.png"
                 alt=""
                 height={50}
                 width={100}
@@ -311,7 +338,7 @@ let RentForm: React.FC<Props> = ({ accommodationId, setIsShowRentForm }) => {
                 checked={rentData.paymentType === PaymentTypeEnum.onlineBank}
               />
               <img
-                src="/FILES/IMAGES/payment-method-images/visa-payment.png"
+                src="/tenant/payment-method-images/visa-payment.png"
                 alt=""
                 height={50}
                 width={100}
@@ -337,7 +364,7 @@ let RentForm: React.FC<Props> = ({ accommodationId, setIsShowRentForm }) => {
                 checked={rentData.paymentType === PaymentTypeEnum.onlinePaypal}
               />
               <img
-                src="/FILES/IMAGES/payment-method-images/paypal.jpeg"
+                src="/tenant/payment-method-images/paypal.jpeg"
                 alt=""
                 height={50}
                 width={100}

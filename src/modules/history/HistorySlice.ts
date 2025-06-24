@@ -39,6 +39,10 @@ export const fetchTenantHistory = createAsyncThunk(
         `/fetch-history-by-tenant/${userId}/${page}/${size}`
       );
 
+      if (!result) {
+        return initialState;
+      }
+
       if (
         (result.data.status && result.data.status !== "Ok") ||
         result.status !== 200
@@ -58,21 +62,7 @@ export const fetchTenantHistory = createAsyncThunk(
 const tenantHistorySlice = createSlice({
   name: "tenantHistory",
   initialState,
-  reducers: {
-    resetTenantHistory: {
-      reducer: (state, action: PayloadAction<StateModel>) => {
-        state.tenantHistory = action.payload.tenantHistory;
-        state.page = action.payload.page;
-        state.size = action.payload.size;
-        state.totalElements = action.payload.totalElements;
-        state.totalPages = action.payload.totalPages;
-      },
-
-      prepare: (tenantHistory: StateModel) => {
-        return { payload: tenantHistory };
-      },
-    },
-  },
+  reducers: {},
 
   extraReducers: (builder) => {
     builder
@@ -101,7 +91,5 @@ const tenantHistorySlice = createSlice({
 
 export const getTenantHistory = (state: { tenantHistory: StateModel }) =>
   state.tenantHistory;
-
-export const { resetTenantHistory } = tenantHistorySlice.actions;
 
 export default tenantHistorySlice.reducer;

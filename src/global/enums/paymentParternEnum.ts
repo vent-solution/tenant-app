@@ -4,7 +4,7 @@ export enum PaymentPartern {
   monthly = "monthly",
   weekly = "weekly",
   daily = "daily",
-  perNigt = "perNigt",
+  perNight = "perNight",
   hourly = "hourly",
   perSemester = "perSemester",
 }

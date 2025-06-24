@@ -12,21 +12,18 @@ import { useDispatch } from "react-redux";
 import { AppDispatch } from "../app/store";
 import { setConfirm } from "../other/ConfirmSlice";
 import { setUserAction } from "../global/actions/actionSlice";
-import { UserModel } from "../modules/users/models/userModel";
 import { useNavigate } from "react-router-dom";
 import { logoutAction } from "../global/actions/logoutAction";
 interface Props {
   navLinks: NavLinkModel[];
+  setNavLinks: React.Dispatch<React.SetStateAction<NavLinkModel[]>>;
 }
 
-const user: UserModel = JSON.parse(localStorage.getItem("dnap-user") as string);
-
-let SideBar: React.FC<Props> = ({ navLinks }) => {
+let SideBar: React.FC<Props> = ({ navLinks, setNavLinks }) => {
   const [showProfileButtons, setShowProfileButtons] = useState<boolean>(false);
 
   const [showLinks, setShowLinks] = useState<boolean>(false);
   const [loading, setLoading] = useState<boolean>(false);
-  const [currentUser] = useState<UserModel>(user);
 
   const navigate = useNavigate();
 
@@ -34,7 +31,7 @@ let SideBar: React.FC<Props> = ({ navLinks }) => {
 
   // handle log out function
   const handelLogOut = async () => {
-    logoutAction(user, setLoading, dispatch);
+    logoutAction(setLoading, dispatch);
   };
 
   const toggleShowProfileButtons = () => {
@@ -49,14 +46,17 @@ let SideBar: React.FC<Props> = ({ navLinks }) => {
     >
       {/* SIDEBAR SECTION UPPER PART */}
       <div className="w-full h-1/6 flex items-center justify-around py-3 px-2 lg:px-10 text-center border-gray-400 border-b-2">
-        <div className="logo  w-fit lg:w-1/3 font-bold">
+        <div
+          className="logo  w-fit font-bold border-2 border-white rounded-full p-2 cursor-pointer"
+          onClick={() => (window.location.href = "/tenant/home")}
+        >
           <img
-            className="w-7 h-7"
-            src={`${process.env.REACT_APP_LOGO_IMAGE}/logo-no-background.png`}
+            className="w-6 h-6"
+            src="/tenant/images/logo-no-background.png"
             alt=""
           />
         </div>
-        <div className="notifications w-1/3 text-xl flex items-center justify-center relative">
+        <div className="notifications w-1/4 text-3xl flex items-center justify-center relative">
           <div className="notification-inner p-1 w-fit h-fit hover:bg-blue-800 cursor-pointer rounded-full border-2 border-white">
             <MdNotifications />
             {/* <span className="text-xs font-bold p-1 line-h text-white bg-red-700 py-0 rounded-full absolute top-0 right-11 lg:right-4 md:right-28 ">
@@ -66,9 +66,9 @@ let SideBar: React.FC<Props> = ({ navLinks }) => {
         </div>
         <div className="profile w-10  transition-all ease-in-out delay-150">
           <div
-            className="profile-image w-7 h-7 rounded-full hover:h-9 hover:w-9 cursor-pointer relative"
+            className="profile-image w-10 h-10 rounded-full hover:h-9 hover:w-9 cursor-pointer relative"
             style={{
-              background: `url(${process.env.REACT_APP_LOGO_IMAGE}/Anatoli-profile-pic.jpeg)`,
+              background: "url('/tenant/images/Anatoli-profile-pic.png')",
               backgroundSize: "cover",
             }}
             onClick={toggleShowProfileButtons}
@@ -92,7 +92,12 @@ let SideBar: React.FC<Props> = ({ navLinks }) => {
       >
         <button
           className=" hover:bg-blue-900 font-bold text-left px-5 text-white flex items-center my-1"
-          onClick={() => navigate(`/users/${currentUser.userId}`)}
+          onClick={() => {
+            const user = JSON.parse(
+              localStorage.getItem("dnap-user") as string
+            );
+            navigate(`/users/${user.userId}`);
+          }}
         >
           <span className="p-2">
             <ImProfile />
@@ -127,8 +132,50 @@ let SideBar: React.FC<Props> = ({ navLinks }) => {
       >
         <div className="py-2 w-full">
           {navLinks.map((navLink, index) => (
-            <NavItem key={index} navLink={navLink} />
+            <NavItem
+              key={index}
+              parentIndex={index}
+              navLink={navLink}
+              setNavLinks={setNavLinks}
+              setShowLinks={setShowLinks}
+            />
           ))}
+        </div>
+        <div
+          className={`py-5 w-full items-center justify-center border-t text-sm`}
+        >
+          <button
+            className="w-full hover:bg-blue-900 text-left px-5 text-white flex items-center my-1"
+            onClick={() => {
+              const user = JSON.parse(
+                localStorage.getItem("dnap-user") as string
+              );
+              navigate(`/users/${user.userId}`);
+            }}
+          >
+            <span className="p-2">
+              <ImProfile />
+            </span>
+            Profile
+          </button>
+          <button
+            className="w-full hover:bg-blue-900 text-left px-5 text-white flex items-center my-3"
+            onClick={() => {
+              dispatch(
+                setConfirm({
+                  message: "Are you sure you want to log out?",
+                  status: true,
+                })
+              );
+
+              dispatch(setUserAction({ userAction: handelLogOut }));
+            }}
+          >
+            <span className="p-2">
+              <RiLogoutCircleLine />
+            </span>
+            {loading ? "Wait..." : "Log out"}
+          </button>
         </div>
       </div>
 

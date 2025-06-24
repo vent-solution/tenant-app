@@ -52,6 +52,18 @@ const ReceiptDetails: React.FC<Props> = ({
           { responseType: "arraybuffer" }
         );
 
+        if (!result) {
+          dispatch(
+            setAlert({
+              status: true,
+              type: AlertTypeEnum.danger,
+              message: "ERROR OCCURRED PLEASE TRY AGAIN LATER!",
+            })
+          );
+
+          return;
+        }
+
         if (result.data.status && result.data.status !== "OK") {
           dispatch(
             setAlert({
@@ -112,7 +124,7 @@ const ReceiptDetails: React.FC<Props> = ({
           <img
             src="/tenant/images/logo-colored-no-bg.png"
             alt="Logo"
-            className="w-14 lg:w-20 h-14 lg:h-20"
+            className="w-14 h-14"
             height={60}
             width={60}
           />

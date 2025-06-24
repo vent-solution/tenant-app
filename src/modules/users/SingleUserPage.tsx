@@ -1,12 +1,10 @@
 import React, { useEffect, useState } from "react";
 import SideBar from "../../sidebar/sideBar";
 import { NavLinkModel } from "./models/navLinkModel";
-import { MdDashboard, MdPayment } from "react-icons/md";
-import { FaBusinessTime, FaReceipt, FaUsers } from "react-icons/fa6";
-import { ImOffice } from "react-icons/im";
+import { MdDashboard } from "react-icons/md";
+import { FaReceipt } from "react-icons/fa6";
 import { RxActivityLog } from "react-icons/rx";
 import { IoDiamondSharp } from "react-icons/io5";
-import Preloader from "../../other/Preloader";
 import { PiBuildingsFill } from "react-icons/pi";
 import { UserModel } from "./models/userModel";
 import UserProfileDetails from "./UserProfile";
@@ -21,7 +19,7 @@ import { getUser } from "./usersSlice";
 interface Props {}
 const UsersPage: React.FC<Props> = () => {
   // LOCAL STATES
-  const [navLinks] = useState<NavLinkModel[]>([
+  const [navLinks, setNavLinks] = useState<NavLinkModel[]>([
     {
       icon: <MdDashboard />,
       name: "Home",
@@ -86,14 +84,13 @@ const UsersPage: React.FC<Props> = () => {
     },
   ]);
 
-  const [isAuthenticated, setIsAuthenticated] = useState(false);
-
   const [currentSection, setCurrentSection] = useState<string>("Profile");
 
   const navigate = useNavigate();
   const { userId } = useParams();
 
-  const user = useSelector(getUser);
+  const userState = useSelector(getUser);
+  const { tenantUser } = userState;
 
   /*
    *create a delay of 3sec and check authication
@@ -101,23 +98,21 @@ const UsersPage: React.FC<Props> = () => {
    */
   useEffect(() => {
     const currentUser = localStorage.getItem("dnap-user");
-    if (currentUser) {
-      setIsAuthenticated(true);
-    } else {
-      window.location.href = "/";
+    if (!currentUser) {
+      window.location.href = `${process.env.REACT_APP_ENTRY_APP_URL}`;
     }
   }, []);
 
   // render section depending on the current active link
-  const renderSection = (user?: UserModel) => {
+  const renderSection = () => {
     switch (currentSection) {
       case "Profile":
-        return <UserProfileDetails userId={Number(user?.userId)} />;
+        return <UserProfileDetails userId={Number(userId)} />;
       case "Activity":
-        return <UserActivityList userId={Number(user?.userId)} />;
+        return <UserActivityList userId={Number(userId)} />;
 
       default:
-        return <UserProfileDetails userId={Number(user?.userId)} />;
+        return <UserProfileDetails userId={Number(userId)} />;
     }
   };
 
@@ -137,15 +132,10 @@ const UsersPage: React.FC<Props> = () => {
     setCurrentSection(id);
   };
 
-  // render preloader screen if not authenticated or page still loading
-  if (!isAuthenticated) {
-    return <Preloader />;
-  }
-
   return (
     <div className="main max-h-screen lg:overflow-hidden flex relative w-full">
       <div className="left lg:w-1/5 w-full md:w-full left-0 right-0 fixed lg:relative text-white z-50">
-        <SideBar navLinks={navLinks} />
+        <SideBar navLinks={navLinks} setNavLinks={setNavLinks} />
       </div>
       <div className="right lg:w-4/5 w-full z-0 mt-20 lg:mt-0">
         <div className="w-full flex py-0 flex-wrap justify-center items-start bg-gradient-to-b from-blue-50 via-blue-100 to-blue-200 px-2">
@@ -158,14 +148,14 @@ const UsersPage: React.FC<Props> = () => {
               Back
             </button>
 
-            {user?.firstName && (
+            {tenantUser.firstName && (
               <h2 className="text-xl font-bold">
                 {"USR-" +
-                  user.userId +
+                  tenantUser.userId +
                   ", " +
-                  user?.firstName +
+                  tenantUser.firstName +
                   " " +
-                  user.lastName}
+                  tenantUser.lastName}
               </h2>
             )}
           </div>
@@ -191,7 +181,7 @@ const UsersPage: React.FC<Props> = () => {
             </li>
           </ul>
         </div>
-        {renderSection(user)}
+        {renderSection()}
       </div>
     </div>
   );

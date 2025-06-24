@@ -23,7 +23,7 @@ const user: UserModel = JSON.parse(localStorage.getItem("dnap-user") as string);
 
 const BidsPage: React.FC<Props> = () => {
   // LOCAL STATES
-  const [navLinks] = useState<NavLinkModel[]>([
+  const [navLinks, setNavLinks] = useState<NavLinkModel[]>([
     {
       icon: <MdDashboard />,
       name: "Dashboard",
@@ -141,7 +141,7 @@ const BidsPage: React.FC<Props> = () => {
   return (
     <div className="main flex relative w-full">
       <div className="left lg:w-1/5 w-full md:w-full left-0 right-0 fixed lg:relative text-white z-50">
-        <SideBar navLinks={navLinks} />
+        <SideBar navLinks={navLinks} setNavLinks={setNavLinks} />
       </div>
       <div className="right lg:w-4/5 w-full z-0">
         <BidsList />

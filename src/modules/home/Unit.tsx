@@ -1,5 +1,4 @@
 import React, { useState } from "react";
-import { FACILITY_IMAGES_URL } from "../../global/filesUrls";
 import ImageSlider from "../../global/ImageSlide";
 import {
   ACCOMMODATION_CATEGORY,
@@ -11,6 +10,7 @@ import {
 import { FormatMoney } from "../../global/actions/formatMoney";
 import { businessTypeEnum } from "../../global/enums/businessTypeEnum";
 import { AccommodationModel } from "../accommodations/AccommodationModel";
+import countriesList from "../../global/data/countriesList.json";
 
 interface Props {
   unit: AccommodationModel;
@@ -27,9 +27,11 @@ let Unit: React.FC<Props> = ({
 }) => {
   const [currentIndex, setCurrentIndex] = useState<number>(0);
 
+  // window.alert(JSON.stringify(unit));
+
   return (
     <div
-      className="w-full px-2 p-10 flex flex-wrap items-center border-b-2 lg:border-b lg:hover:bg-gray-100 transition duration-1000 ease-in-out cursor-pointer hover:shadow-lg"
+      className="w-full px-1 p-10 flex flex-wrap items-center border-b-2 lg:border-b lg:hover:bg-gray-100 transition duration-1000 ease-in-out cursor-pointer hover:shadow-lg"
       onClick={() => {
         setSelectedAccommodationId(Number(unit.accommodationId));
         setIsShowUnitDetails(true);
@@ -38,13 +40,10 @@ let Unit: React.FC<Props> = ({
       <div className="w-full lg:w-1/4">
         {
           <ImageSlider
-            imageUrl={`${FACILITY_IMAGES_URL}/${unit.facility.facilityId}`}
+            imageUrl={`${process.env.REACT_APP_FACILITY_IMAGES_URL}/${unit.facility.facilityId}`}
             currentIndex={currentIndex}
             setCurrentIndex={setCurrentIndex}
-            images={unit.facility.facilityImages?.map((img, index) => ({
-              imageId: index + 1,
-              imageName: img.imageName,
-            }))}
+            images={unit.facility.facilityImages}
           />
         }
       </div>
@@ -74,7 +73,12 @@ let Unit: React.FC<Props> = ({
           }{" "}
           {<span>in </span>}
           {unit.facility.facilityLocation.city}{" "}
-          {unit.facility.facilityLocation.country}
+          {
+            countriesList.find(
+              (country) =>
+                country.value === unit.facility.facilityLocation.country
+            )?.label
+          }
         </h1>
 
         <h6 className="text-sm text-gray-500">

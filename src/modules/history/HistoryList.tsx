@@ -1,25 +1,19 @@
 import React, { useCallback, useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import {
-  fetchTenantHistory,
-  getTenantHistory,
-  resetTenantHistory,
-} from "./HistorySlice";
+import { fetchTenantHistory, getTenantHistory } from "./HistorySlice";
 import FacilityHistoryRow from "./HistoryRow";
 import { FaSearch } from "react-icons/fa";
 import { HistoryModel } from "./HistoryModel";
-import axios from "axios";
 import { AppDispatch } from "../../app/store";
-import { fetchData } from "../../global/api";
 import PaginationButtons from "../../global/PaginationButtons";
 import Preloader from "../../other/Preloader";
 import { UserModel } from "../users/models/userModel";
 import HistoryDetails from "./HistoryDetails";
-import { resetFacilityHistory } from "../facilities/history/HistorySlice";
 import { AccommodationModel } from "../accommodations/AccommodationModel";
+import EmptyList from "../../global/EnptyList";
 
 interface Props {}
-const HistoryList: React.FC<Props> = () => {
+let HistoryList: React.FC<Props> = () => {
   const [filteredTenantHistory, setFilteredTenantHistory] = useState<
     HistoryModel[]
   >([]);
@@ -30,6 +24,10 @@ const HistoryList: React.FC<Props> = () => {
 
   const [showAccommodationDetails, setShowAccommodationDetails] =
     useState<boolean>(false);
+
+  const [selectedHistory, setSelectedHistory] = useState<HistoryModel | null>(
+    null
+  );
 
   const dispatch = useDispatch<AppDispatch>();
   const tenantHistoryState = useSelector(getTenantHistory);
@@ -42,6 +40,10 @@ const HistoryList: React.FC<Props> = () => {
     page,
     size,
   } = tenantHistoryState;
+
+  const currentUser: UserModel = JSON.parse(
+    localStorage.getItem("dnap-user") as string
+  );
 
   // fetch tenant history
   useEffect(() => {
@@ -119,21 +121,13 @@ const HistoryList: React.FC<Props> = () => {
       localStorage.getItem("dnap-user") as string
     );
 
-    try {
-      const result = await fetchData(
-        `/fetch-history-by-tenant/${Number(currentUser.userId)}/${
-          page + 1
-        }/${size}`
-      );
-      if (result.data.status && result.data.status !== "OK") {
-      }
-      dispatch(resetTenantHistory(result.data));
-    } catch (error) {
-      if (axios.isCancel(error)) {
-        console.log("FETCH HISTORY CANCELLED ", error.message);
-      }
-      console.error("Error fetching history: ", error);
-    }
+    dispatch(
+      fetchTenantHistory({
+        userId: Number(currentUser.userId),
+        page: page + 1,
+        size: size,
+      })
+    );
   }, [dispatch, page, size]);
 
   // handle fetch next page
@@ -141,21 +135,13 @@ const HistoryList: React.FC<Props> = () => {
     const currentUser: UserModel = JSON.parse(
       localStorage.getItem("dnap-user") as string
     );
-    try {
-      const result = await fetchData(
-        `/fetch-history-by-tenant/${Number(currentUser.userId)}/${
-          page - 1
-        }/${size}`
-      );
-      if (result.data.status && result.data.status !== "OK") {
-      }
-      dispatch(resetFacilityHistory(result.data));
-    } catch (error) {
-      if (axios.isCancel(error)) {
-        console.log("FETCH HISTORY CANCELLED ", error.message);
-      }
-      console.error("Error fetching history: ", error);
-    }
+    dispatch(
+      fetchTenantHistory({
+        userId: Number(currentUser.userId),
+        page: page - 1,
+        size: size,
+      })
+    );
   }, [dispatch, page, size]);
 
   // show and hide accommodation details
@@ -171,23 +157,20 @@ const HistoryList: React.FC<Props> = () => {
     return (
       <div className="h-[calc(100vh-0px)] lg:px-5 overflow-auto w-full">
         <HistoryDetails
-          accommodation={currentAccommodation}
+          history={selectedHistory}
           toggleShowAccommodationDetails={toggleShowAccommodationDetails}
         />
       </div>
     );
 
   return (
-    <div className="users-list flex w-full h-svh lg:h-dvh mt-24 lg:mt-0 z-0 ">
-      <div className="h-[calc(100vh-0px)] w-full relative bg-gray-200">
-        <div className="bg-white w-full mb-3 shadow-lg">
-          <div className="w-full h-1/3 flex flex-wrap justify-between items-center px-10 py-3">
-            <div className="w-full lg:w-1/4">
-              <h1 className="text-2xl text-blue-900">History</h1>
-            </div>
-
+    <div className="users-list flex w-full h-svh lg:h-dvh mt-20 lg:mt-0 z-0 bg-gray-200">
+      <div className="list w-full relative">
+        <div className="bg-white w-full">
+          <div className="w-full h-1/3 flex flex-wrap justify-end items-center px-2 lg:px-10 py-3 bg-white shadow-lg">
             <div className="w-full lg:w-2/3 flex flex-wrap justify-between items-center">
               <div className="w-full lg:w-1/2 flex justify-between lg:justify-around items-center">
+                <h1 className="text-2xl text-blue-900">History</h1>
                 <h1 className="text-lg">
                   {filteredTenantHistory.length + "/" + totalElements}
                 </h1>
@@ -220,14 +203,14 @@ const HistoryList: React.FC<Props> = () => {
             <table className="border-2 w-full bg-white mt-2 lg:mt-0 shadow-lg">
               <thead className="sticky top-0 bg-blue-900 text-base text-white">
                 <tr>
-                  <th>Facility</th>
-                  <th>Unit</th>
-                  <th>Floor</th>
-                  <th>Unit Type</th>
-                  <th>Facility Tel</th>
-                  <th>Facility Email</th>
-                  <th>Check-In</th>
-                  <th>Check-Out</th>
+                  <th className="p-2 text-start font-bold">Facility</th>
+                  <th className="p-2 text-start font-bold">Unit</th>
+                  <th className="p-2 text-start font-bold">Floor</th>
+                  <th className="p-2 text-start font-bold">Unit Type</th>
+                  <th className="p-2 text-start font-bold">Facility Tel</th>
+                  <th className="p-2 text-start font-bold">Facility Email</th>
+                  <th className="p-2 text-start font-bold">Check-In</th>
+                  <th className="p-2 text-start font-bold">Check-Out</th>
                 </tr>
               </thead>
               <tbody>
@@ -237,6 +220,7 @@ const HistoryList: React.FC<Props> = () => {
                     history={history}
                     onClick={() => {
                       setCurrentAccommodation(history.accommodation);
+                      setSelectedHistory(history);
                       toggleShowAccommodationDetails();
                     }}
                   />
@@ -244,15 +228,7 @@ const HistoryList: React.FC<Props> = () => {
               </tbody>
             </table>
           ) : (
-            <div className="w-ull h-full flex justify-center items-center">
-              <div
-                className="w-32 h-32"
-                style={{
-                  background: "URL('/images/Ghost.gif')",
-                  backgroundSize: "cover",
-                }}
-              ></div>
-            </div>
+            <EmptyList itemName="history" />
           )}
         </div>
         <PaginationButtons
@@ -265,5 +241,7 @@ const HistoryList: React.FC<Props> = () => {
     </div>
   );
 };
+
+HistoryList = React.memo(HistoryList);
 
 export default HistoryList;

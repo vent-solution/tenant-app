@@ -16,8 +16,8 @@ import AlertMessage from "../../other/alertMessage";
 import { setAlert } from "../../other/alertSlice";
 import { UserModel } from "../users/models/userModel";
 import PhoneInput from "react-phone-input-2";
-import { TenantCreationModel } from "../tenants/TenantModel";
-import TenantDetailsForm from "../tenants/TenantDetailsForm";
+import TenantDetailsForm from "./TenantDetailsForm";
+import { TenantCreationModel } from "./TenantModel";
 
 const SignUpForm = () => {
   const [loading, setLoading] = useState(false);
@@ -144,7 +144,7 @@ const SignUpForm = () => {
       return;
     }
 
-    // check if the emamil is valid
+    // check if the email is valid
     if (!isValidEmail(String(user.userEmail))) {
       const parent: HTMLElement | null = email.parentElement;
 

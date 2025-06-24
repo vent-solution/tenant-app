@@ -2,7 +2,6 @@ import React, { useEffect, useState } from "react";
 import { FaHistory } from "react-icons/fa";
 import { MdDashboard } from "react-icons/md";
 import { RxActivityLog } from "react-icons/rx";
-import Preloader from "../../other/Preloader";
 import SideBar from "../../sidebar/sideBar";
 import { NavLinkModel } from "../users/models/navLinkModel";
 import LogsList from "./LogsList";
@@ -12,17 +11,14 @@ import { useDispatch, useSelector } from "react-redux";
 import { AppDispatch } from "../../app/store";
 import { fetchLogs } from "./LogsSlice";
 import { TbBrandBooking } from "react-icons/tb";
-import { IoDiamondSharp } from "react-icons/io5";
 import { FaReceipt } from "react-icons/fa6";
 import { getUser } from "../users/usersSlice";
 
 interface Props {}
 
-const user: UserModel = JSON.parse(localStorage.getItem("dnap-user") as string);
-
 const LogsPage: React.FC<Props> = () => {
   // LOCAL STATES
-  const [navLinks] = useState<NavLinkModel[]>([
+  const [navLinks, setNavLinks] = useState<NavLinkModel[]>([
     {
       icon: <MdDashboard />,
       name: "Home",
@@ -80,41 +76,38 @@ const LogsPage: React.FC<Props> = () => {
     },
   ]);
 
-  const [isAuthenticated, setIsAuthenticated] = useState(false);
-  const [currentUser] = useState<UserModel | null>(user);
-
   const dispatch = useDispatch<AppDispatch>();
 
-  const tenantUser = useSelector(getUser);
+  const tenantUserState = useSelector(getUser);
+
+  const { tenantUser, status } = tenantUserState;
+
+  const statusR = status;
 
   /*
    *create a delay of 3sec and check authication
    * to proceed to page or go back to login page
    */
   useEffect(() => {
-    if (currentUser) {
-      setIsAuthenticated(true);
-    } else {
-      window.location.href = "/";
+    const currentUser = localStorage.getItem("dnap-user");
+    if (!currentUser) {
+      window.location.href = `${process.env.REACT_APP_ENTRY_APP_URL}`;
     }
   }, []);
 
   // fetch user logs
   useEffect(() => {
-    dispatch(
-      fetchLogs({ userId: [Number(currentUser?.userId)], page: 0, size: 25 })
+    const user: UserModel = JSON.parse(
+      localStorage.getItem("dnap-user") as string
     );
-  }, [currentUser?.userId, dispatch, tenantUser.userId]);
 
-  // render preloader screen if not authenticated or page still loading
-  if (!isAuthenticated) {
-    return <Preloader />;
-  }
+    dispatch(fetchLogs({ userId: [Number(user?.userId)], page: 0, size: 25 }));
+  }, [dispatch]);
 
   return (
     <div className="main flex relative w-full">
       <div className="left lg:w-1/5 w-full md:w-full left-0 right-0 fixed lg:relative text-white z-50">
-        <SideBar navLinks={navLinks} />
+        <SideBar navLinks={navLinks} setNavLinks={setNavLinks} />
       </div>
       <div className="right lg:w-4/5 w-full z-0">
         <LogsList />

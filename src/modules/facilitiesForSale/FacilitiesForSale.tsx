@@ -1,21 +1,19 @@
 import React, { useCallback, useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { AppDispatch } from "../../app/store";
-import axios from "axios";
-import { fetchData } from "../../global/api";
-import { AlertTypeEnum } from "../../global/enums/alertTypeEnum";
 import PaginationButtons from "../../global/PaginationButtons";
 import { FACILITY_CATEGORY_DATA } from "../../global/PreDefinedData/PreDefinedData";
-import { setAlert } from "../../other/alertSlice";
 import countriesList from "../../global/data/countriesList.json";
 import Select from "react-select";
 import { FacilitiesModel } from "../facilities/FacilityModel";
 import {
+  fetchFacilitiesForSale,
   getFacilitiesForSale,
-  resetFacilitiesForSale,
 } from "./facilitiesForSaleSlice";
 import FacilityDetails from "./FacilityDetails";
 import FacilityForSale from "./FacilityForSale";
+import EmptyList from "../../global/EnptyList";
+import Preloader from "../../other/Preloader";
 
 interface Props {}
 
@@ -45,7 +43,8 @@ const FacilitiesForSale: React.FC<Props> = () => {
   const dispatch = useDispatch<AppDispatch>();
 
   const facilitiesForSaleState = useSelector(getFacilitiesForSale);
-  const { facilitiesForSale, page, totalPages, size } = facilitiesForSaleState;
+  const { facilitiesForSale, page, totalPages, size, status } =
+    facilitiesForSaleState;
 
   // Handle the change of selected country
   const handleCountryChange = (
@@ -60,56 +59,12 @@ const FacilitiesForSale: React.FC<Props> = () => {
 
   // handle fetch next page
   const handleFetchNextPage = useCallback(async () => {
-    try {
-      const result = await fetchData(
-        `/fetch-facilities-for-sale/${page + 1}/${size}`
-      );
-      console.log(result.data);
-      if (result.data.status && result.data.status !== "OK") {
-        dispatch(
-          setAlert({
-            message: result.data.message,
-            type: AlertTypeEnum.danger,
-            status: true,
-          })
-        );
-
-        return;
-      }
-      dispatch(resetFacilitiesForSale(result.data));
-    } catch (error) {
-      if (axios.isCancel(error)) {
-        console.log("FETCH FACILITIES FOR SALE CANCELLED ", error.message);
-      }
-      console.error("Error fetching facilities for sale: ", error);
-    }
+    dispatch(fetchFacilitiesForSale({ page: page + 1, size: size }));
   }, [dispatch, page, size]);
 
   // handle fetch next page
   const handleFetchPreviousPage = useCallback(async () => {
-    try {
-      const result = await fetchData(
-        `/fetch-facilities-for-sale/${page - 1}/${size}`
-      );
-
-      if (result.data.status && result.data.status !== "OK") {
-        dispatch(
-          setAlert({
-            message: result.data.message,
-            type: AlertTypeEnum.danger,
-            status: true,
-          })
-        );
-
-        return;
-      }
-      dispatch(resetFacilitiesForSale(result.data));
-    } catch (error) {
-      if (axios.isCancel(error)) {
-        console.log("FETCH FACILITIES FOR SALE CANCELLED ", error.message);
-      }
-      console.error("Error fetching facilities for sale: ", error);
-    }
+    dispatch(fetchFacilitiesForSale({ page: page - 1, size: size }));
   }, [dispatch, page, size]);
 
   //filter facilities for sale depending on type, country and city
@@ -174,6 +129,8 @@ const FacilitiesForSale: React.FC<Props> = () => {
     facilitiesFilter.country,
   ]);
 
+  if (status === "loading") return <Preloader />;
+
   if (isShowFacilityDetails)
     return (
       <FacilityDetails
@@ -185,11 +142,14 @@ const FacilitiesForSale: React.FC<Props> = () => {
   return (
     <div className="list w-full relative">
       <div className="bg-white w-full pt-3 lg:pt-0">
-        <div className="w-full h-1/3 flex flex-wrap justify-end items-center px-10 py-1 bg-white shadow-lg mb-3">
+        <div className="w-full h-1/3 flex flex-wrap justify-end items-center px-2 lg:px-10 py-1 bg-white shadow-lg mb-3">
           <div className="w-full lg:w-full flex flex-wrap justify-between items-center">
             <div
               className={` rounded-full  bg-white flex flex-wrap justify-around items-center  w-full lg:w-full h-3/4 mt-0 lg:mt-0 `}
             >
+              <h1 className="text-2xl font-bold w-full p-5">
+                Facilities for sale
+              </h1>
               <div className="w-full lg:w-1/4 text-lg capitalize px-5">
                 <select
                   name=""
@@ -256,7 +216,7 @@ const FacilitiesForSale: React.FC<Props> = () => {
       <div className="lg:px-5 mb-12 overflow-auto pb-5 h-[calc(100svh-150px)] relative">
         {filteredFacilities.length > 0 ? (
           <div className="w-full lg:w-full p-2 bg-white m-auto flex flex-wrap">
-            <div className="p-10 w-full overflow-auto flex flex-wrap">
+            <div className="py-10 px-2 lg:px-10 w-full overflow-auto flex flex-wrap">
               {filteredFacilities.map((facility, index) => (
                 <FacilityForSale
                   key={index}
@@ -268,15 +228,7 @@ const FacilitiesForSale: React.FC<Props> = () => {
             </div>
           </div>
         ) : (
-          <div className="w-ull h-[calc(100vh-70px)] flex justify-center items-center">
-            <div
-              className="w-32 h-32"
-              style={{
-                background: "URL('/images/Ghost.gif')",
-                backgroundSize: "cover",
-              }}
-            ></div>
-          </div>
+          <EmptyList itemName="facility" />
         )}
       </div>
 

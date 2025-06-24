@@ -1,5 +1,4 @@
 import React, { useCallback, useEffect, useState } from "react";
-import { AccommodationModel } from "./AccommodationModel";
 import { RxCross1 } from "react-icons/rx";
 import { useDispatch, useSelector } from "react-redux";
 import {
@@ -7,7 +6,7 @@ import {
   getAccommodationRent,
   resetAccommodationRent,
 } from "./AccommodationRentSlice";
-import { FaSearch } from "react-icons/fa";
+import { FaEnvelope, FaPhone, FaSearch } from "react-icons/fa";
 import AccommodationRentRow from "./AccommodationRentRow";
 import axios from "axios";
 
@@ -24,18 +23,21 @@ import { FormatMoney } from "../../global/actions/formatMoney";
 import { fetchData } from "../../global/api";
 import RentForm from "../rent/RentForm";
 import { RentModel } from "../rent/RentModel";
+import { HistoryModel } from "../history/HistoryModel";
+import { FaLocationDot } from "react-icons/fa6";
+import countriesList from "../../global/data/countriesList.json";
+import { calculateRentExpiry } from "../../global/actions/calculateRentExpiry";
+import { calculateFutureDate } from "../receipts/calculateFutureDate";
+import { parseISO } from "date-fns";
+import { calculateBalanceDate } from "../receipts/calculateBalanceDate";
 
 interface Props {
-  accommodation?: AccommodationModel;
+  history?: HistoryModel;
   toggleShowAccommodationDetails: () => void;
 }
 
-const currentUser: UserModel = JSON.parse(
-  localStorage.getItem("dnap-user") as string
-);
-
 const AccommodationDetails: React.FC<Props> = ({
-  accommodation,
+  history,
   toggleShowAccommodationDetails,
 }) => {
   const [currencyNames, setCurrencyNames] = useState<string[]>([]);
@@ -51,7 +53,7 @@ const AccommodationDetails: React.FC<Props> = ({
 
   const dispatch = useDispatch<AppDispatch>();
   const accommodationRentState = useSelector(getAccommodationRent);
-  const { accommodationRent, page, size, totalElements, totalPages } =
+  const { tenantRent, page, size, totalElements, totalPages } =
     accommodationRentState;
 
   const currencyState = useSelector(getCurrencyExchange);
@@ -64,36 +66,41 @@ const AccommodationDetails: React.FC<Props> = ({
 
   // set the converted money
   useEffect(() => {
-    const fac = String(accommodation?.facility.preferedCurrency);
+    const fac = String(history?.accommodation.facility.preferedCurrency);
     setConvertedPrice(
       (Number(currencyState[desiredCurrency]) / Number(currencyState[fac])) *
-        Number(accommodation?.price)
+        Number(history?.accommodation.price)
     );
   }, [
     currencyState,
     desiredCurrency,
-    accommodation?.facility.preferedCurrency,
-    accommodation?.price,
+    history?.accommodation.facility.preferedCurrency,
+    history?.accommodation.price,
   ]);
 
   // fetch accommodation rent records
   useEffect(() => {
-    if (accommodation) {
+    if (history) {
       dispatch(
         fetchAccommodationRent({
-          accommodationId: Number(accommodation?.accommodationId),
+          tenantId: Number(history?.tenant.tenantId),
+          accommodationId: Number(history?.accommodation.accommodationId),
           page: 0,
           size: 25,
         })
       );
     }
-  }, [accommodation, dispatch]);
+  }, [history, dispatch]);
 
   // filter rent records
   useEffect(() => {
+    const currentUser: UserModel = JSON.parse(
+      localStorage.getItem("dnap-user") as string
+    );
+
     const originalAccommodationRent =
-      accommodationRent.length > 0
-        ? [...accommodationRent]
+      tenantRent.length > 0
+        ? [...tenantRent]
             .filter(
               (rnt) =>
                 Number(rnt.tenant.user.userId) === Number(currentUser.userId)
@@ -145,14 +152,14 @@ const AccommodationDetails: React.FC<Props> = ({
         })
       );
     }
-  }, [searchString, accommodationRent]);
+  }, [searchString, tenantRent]);
 
   // handle fetch next page
   const handleFetchNextPage = useCallback(async () => {
     try {
       const result = await fetchData(
         `/fetch-rent-by-accommodation/${Number(
-          accommodation?.accommodationId
+          history?.accommodation.accommodationId
         )}/${page + 1}/${size}`
       );
       dispatch(resetAccommodationRent(result.data));
@@ -162,14 +169,14 @@ const AccommodationDetails: React.FC<Props> = ({
       }
       console.error("Error fetching rent: ", error);
     }
-  }, [dispatch, page, size, accommodation?.accommodationId]);
+  }, [dispatch, page, size, history?.accommodation.accommodationId]);
 
   // handle fetch previous page
   const handleFetchPreviousPage = useCallback(async () => {
     try {
       const result = await fetchData(
         `/fetch-rent-by-accommodation/${Number(
-          accommodation?.accommodationId
+          history?.accommodation.accommodationId
         )}/${page - 1}/${size}`
       );
       dispatch(resetAccommodationRent(result.data));
@@ -179,7 +186,7 @@ const AccommodationDetails: React.FC<Props> = ({
       }
       console.error("Error fetching rent: ", error);
     }
-  }, [dispatch, page, size, accommodation?.accommodationId]);
+  }, [dispatch, page, size, history?.accommodation.accommodationId]);
 
   // Define two dates
   const date1 = new Date("2024-01-01");
@@ -190,16 +197,11 @@ const AccommodationDetails: React.FC<Props> = ({
     throw new Error("Invalid date format");
   }
 
-  // Get the difference in time (milliseconds)
-  const differenceInTime = date2.getTime() - date1.getTime();
-
-  // Convert the difference to days
-  const differenceInDays = differenceInTime / (1000 * 60 * 60 * 24);
-
   if (isShowRentForm) {
     return (
       <RentForm
-        accommodationId={Number(accommodation?.accommodationId)}
+        accommodationId={Number(history?.accommodation.accommodationId)}
+        tenantId={Number(history?.tenant.tenantId)}
         setIsShowRentForm={setIsShowRentForm}
       />
     );
@@ -207,11 +209,31 @@ const AccommodationDetails: React.FC<Props> = ({
 
   return (
     <div className="w-full h-fit p-0 relative mt-24 lg:mt-0">
-      <div className="w-full lg:w-5/6 m-auto h-full shadow-xl">
-        <div className="w-full p-2 flex justify-between items-center sticky top-0  shadow-lg z-10 bg-white">
-          <h1 className="text-lg font-bold">
-            {accommodation?.accommodationNumber}
-          </h1>
+      <div className="w-full m-auto h-full shadow-xl">
+        <div className="w-full p-2 flex flex-wrap justify-between items-center sticky top-0  shadow-lg z-10 bg-white">
+          {tenantRent.length > 0 ? (
+            <h1
+              className={`text-lg w-full lg:w-fit  pb-3 lg:pb-0 font-bold py-3 lg:py-0 text-${calculateRentExpiry(
+                tenantRent[0].balance,
+                new Date(String(history?.checkIn)),
+                String(history?.accommodation.paymentPartten),
+                tenantRent[0].periods
+              )}`}
+            >
+              {new Date(
+                String(
+                  calculateFutureDate(
+                    tenantRent[0].balance,
+                    new Date(String(history?.checkIn)),
+                    String(history?.accommodation.paymentPartten),
+                    tenantRent[0].periods
+                  )
+                )
+              ).toDateString()}
+            </h1>
+          ) : (
+            <h1>.</h1>
+          )}
           <div className="price flex">
             <select
               name="currency"
@@ -222,13 +244,13 @@ const AccommodationDetails: React.FC<Props> = ({
               }
             >
               <option
-                value={accommodation?.facility.preferedCurrency}
+                value={history?.accommodation.facility.preferedCurrency}
                 className="bg-gray-200"
               >
-                {accommodation?.facility.preferedCurrency}
+                {history?.accommodation.facility.preferedCurrency}
               </option>
-              {currencyNames.map((crn) => (
-                <option value={crn} className="bg-gray-200">
+              {currencyNames.map((crn, index) => (
+                <option key={index} value={crn} className="bg-gray-200">
                   {crn}
                 </option>
               ))}
@@ -236,11 +258,11 @@ const AccommodationDetails: React.FC<Props> = ({
             <h1 className="text-lg font-bold font-mono text-black">
               {FormatMoney(
                 !desiredCurrency
-                  ? Number(accommodation?.price)
+                  ? Number(history?.accommodation.price)
                   : Number(convertedPrice),
                 2,
                 !desiredCurrency
-                  ? String(accommodation?.facility.preferedCurrency)
+                  ? String(history?.accommodation.facility.preferedCurrency)
                   : desiredCurrency
               )}
             </h1>
@@ -256,56 +278,23 @@ const AccommodationDetails: React.FC<Props> = ({
         </div>
         <div className="w-full h-full flex flex-wrap justify-between items-start pt-10">
           <div className="w-full lg:w-1/3 px-3">
-            {/* facility details */}
-            <div className="p-4 w-full  shadow-lg">
-              <h2 className="text-xl font-bold">Facility</h2>
-              <div className="p-2 flex justify-start items-center w-full">
-                <p className="text-sm flex flex-wrap">
-                  <span className="w-full">
-                    <b>ID: </b>
-                    <span>{"FAC-" + accommodation?.facility.facilityId}</span>
-                  </span>
-                  <span className="w-full">
-                    <b>Name: </b>
-                    <span>{accommodation?.facility.facilityName}</span>
-                  </span>
-                  <span className="w-full">
-                    <b>Location: </b>
-                    <span>
-                      {accommodation?.facility.facilityLocation.city +
-                        " " +
-                        accommodation?.facility.facilityLocation.country}
-                    </span>
-                  </span>
-                  <span className="w-full">
-                    <b>Tel: </b>
-                    <span>{accommodation?.facility.contact.telephone1}</span>
-                  </span>
-
-                  <span className="w-full">
-                    <b>Email: </b>
-                    <span>{accommodation?.facility.contact.email}</span>
-                  </span>
-                </p>
-              </div>
-            </div>
-
             {/* accommodation section */}
             <div className="p-4 w-full  shadow-lg">
-              <h2 className="text-xl font-bold">Unit details</h2>
+              <h2 className="text-xl font-bold flex items-center justify-between">
+                Unit details{" "}
+                <span className="text-gray-400">
+                  {history?.accommodation.accommodationNumber}
+                </span>
+              </h2>
               <div className="p-2 flex justify-start items-center w-full">
                 <p className="text-sm flex flex-wrap">
                   <span className="w-full">
-                    <b>ID: </b>
-                    <span>{"ACC-" + accommodation?.accommodationId}</span>
-                  </span>
-                  <span className="w-full">
                     <b>Number: </b>
-                    <span>{accommodation?.accommodationNumber}</span>
+                    <span>{history?.accommodation.accommodationNumber}</span>
                   </span>
                   <span className="w-full">
                     <b>Floor: </b>
-                    <span>{accommodation?.floor}</span>
+                    <span>{history?.accommodation.floor}</span>
                   </span>
                   <span className="w-full">
                     <b>Type: </b>
@@ -313,12 +302,13 @@ const AccommodationDetails: React.FC<Props> = ({
                       {
                         ACCOMMODATION_TYPE_DATA.find(
                           (type) =>
-                            type.value === accommodation?.accommodationType
+                            type.value ===
+                            history?.accommodation.accommodationType
                         )?.label
                       }
                     </span>
                   </span>
-                  {accommodation?.accommodationCategory && (
+                  {history?.accommodation.accommodationCategory && (
                     <span className="w-full">
                       <b>Category: </b>
                       <span>
@@ -326,17 +316,17 @@ const AccommodationDetails: React.FC<Props> = ({
                           ACCOMMODATION_CATEGORY.find(
                             (category) =>
                               category.value ===
-                              accommodation?.accommodationCategory
+                              history?.accommodation.accommodationCategory
                           )?.label
                         }
                       </span>
                     </span>
                   )}
 
-                  {accommodation?.capacity && (
+                  {history?.accommodation.capacity && (
                     <span className="w-full">
                       <b>Capacity: </b>
-                      <span>{accommodation?.capacity}</span>
+                      <span>{history?.accommodation.capacity}</span>
                     </span>
                   )}
 
@@ -345,25 +335,79 @@ const AccommodationDetails: React.FC<Props> = ({
                     <span className="font-mono">
                       {FormatMoney(
                         !desiredCurrency
-                          ? Number(accommodation?.price)
+                          ? Number(history?.accommodation.price)
                           : Number(convertedPrice),
                         2,
                         !desiredCurrency
-                          ? String(accommodation?.facility.preferedCurrency)
+                          ? String(
+                              history?.accommodation.facility.preferedCurrency
+                            )
                           : desiredCurrency
                       )}{" "}
                       /{" "}
                       {
                         PAYMENT_PARTERN.find(
                           (parttern) =>
-                            parttern.value === accommodation?.paymentPartten
+                            parttern.value ===
+                            history?.accommodation.paymentPartten
                         )?.label
                       }
                     </span>
                   </span>
                   <span className="w-full">
                     <b>Status: </b>
-                    <span>{accommodation?.availability}</span>
+                    <span>{history?.accommodation.availability}</span>
+                  </span>
+                </p>
+              </div>
+            </div>
+
+            {/* facility details */}
+            <div className="p-4 w-full  shadow-lg">
+              <h2 className="text-xl font-bold">Facility</h2>
+              <div className="p-2 flex justify-start items-center w-full">
+                <p className="text-sm flex flex-wrap">
+                  <span className="w-full">
+                    <b>ID: </b>
+                    <span>
+                      {"FAC-" + history?.accommodation.facility.facilityId}
+                    </span>
+                  </span>
+                  <span className="w-full">
+                    <b>Name: </b>
+                    <span>{history?.accommodation.facility.facilityName}</span>
+                  </span>
+                  <span className="w-full flex items-center py-1">
+                    <FaLocationDot className="text-blue-400" />
+                    <span>
+                      {history?.accommodation.facility.facilityLocation.city +
+                        " " +
+                        countriesList.find(
+                          (country) =>
+                            country.value ===
+                            history?.accommodation.facility.facilityLocation
+                              .country
+                        )?.label}
+                    </span>
+
+                    <span>
+                      {", "}
+                      {
+                        history?.accommodation.facility.facilityLocation
+                          .primaryAddress
+                      }
+                    </span>
+                  </span>
+                  <span className="w-full flex items-center pb-1">
+                    <FaPhone className="text-green-400" />
+                    <span>
+                      {history?.accommodation.facility.contact.telephone1}
+                    </span>
+                  </span>
+
+                  <span className="w-full flex items-center">
+                    <FaEnvelope className="text-red-400" />
+                    <span>{history?.accommodation.facility.contact.email}</span>
                   </span>
                 </p>
               </div>
@@ -371,16 +415,64 @@ const AccommodationDetails: React.FC<Props> = ({
 
             {/* rent schedule section */}
             <div className="p-4 w-full  shadow-lg">
-              <h2 className="text-xl font-bold">Rent schedule</h2>
-              <p>{differenceInDays}</p>
-              {/* <div className="p-2 flex justify-start items-center w-full">
+              <h2 className="text-xl font-bold">Schedules</h2>
+              <div className="p-2 flex justify-start items-center w-full">
                 <p className="text-sm flex flex-wrap">
                   <span className="w-full">
-                    <b>Next payment date: </b>
-                    <span>{"ACC-" + accommodation?.accommodationId}</span>
+                    <b>CheckIn: </b>
+                    <span>
+                      {parseISO(String(history?.checkIn)).toDateString()}
+                    </span>
                   </span>
                 </p>
-              </div> */}
+              </div>
+
+              <div className="p-2 flex justify-start items-center w-full">
+                {tenantRent.length > 0 && (
+                  <h1 className={`text-sm py-1 lg:py-0 `}>
+                    <b className="font-bold">Rent expiry: </b>
+                    <span
+                      className={`text-${calculateRentExpiry(
+                        tenantRent[0].balance,
+                        new Date(String(history?.checkIn)),
+                        String(history?.accommodation.paymentPartten),
+                        tenantRent[0].periods
+                      )}`}
+                    >
+                      {new Date(
+                        String(
+                          calculateFutureDate(
+                            tenantRent[0].balance,
+                            new Date(String(history?.checkIn)),
+                            String(history?.accommodation.paymentPartten),
+                            tenantRent[0].periods
+                          )
+                        )
+                      ).toDateString()}
+                    </span>
+                  </h1>
+                )}
+              </div>
+
+              <div className="p-x flex justify-start items-center w-full">
+                {tenantRent.length > 0 && (
+                  <h1 className="text-sm font-light pt-5 lg:pt-0">
+                    Balance for{" "}
+                    {calculateBalanceDate(
+                      // tenantRent[0].balance,
+                      new Date(String(history?.checkIn)),
+                      String(history?.accommodation.paymentPartten),
+                      tenantRent[0].periods
+                    )}
+                    :{" "}
+                    {FormatMoney(
+                      Number(tenantRent[0].balance),
+                      2,
+                      tenantRent[0].currency
+                    )}
+                  </h1>
+                )}
+              </div>
             </div>
           </div>
 

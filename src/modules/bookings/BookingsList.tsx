@@ -3,20 +3,15 @@ import { useDispatch, useSelector } from "react-redux";
 
 import { BookingModel } from "./BookingModel";
 import { FaSearch } from "react-icons/fa";
-import axios from "axios";
 import { AppDispatch } from "../../app/store";
-import { fetchData } from "../../global/api";
 import PaginationButtons from "../../global/PaginationButtons";
 import AlertMessage from "../../other/alertMessage";
 import Preloader from "../../other/Preloader";
 
-import {
-  fetchTenantBookings,
-  getTenantBookings,
-  resetTenantBookings,
-} from "./bookingsSlice";
+import { fetchTenantBookings, getTenantBookings } from "./bookingsSlice";
 import { UserModel } from "../users/models/userModel";
 import BookingRow from "./BookingRow";
+import EmptyList from "../../global/EnptyList";
 interface Props {}
 
 let BookingsList: React.FC<Props> = () => {
@@ -111,20 +106,13 @@ let BookingsList: React.FC<Props> = () => {
   // handle fetch next page
   const handleFetchNextPage = useCallback(async () => {
     const currentUser = JSON.parse(localStorage.getItem("dnap-user") as string);
-
-    try {
-      const result = await fetchData(
-        `/fetch-bookings-by-tenant/${Number(currentUser.userId)}/${
-          page + 1
-        }/${size}`
-      );
-      dispatch(resetTenantBookings(result.data));
-    } catch (error) {
-      if (axios.isCancel(error)) {
-        console.log("FETCH BOOKINGS CANCELLED ", error.message);
-      }
-      console.error("Error fetching bookings: ", error);
-    }
+    dispatch(
+      fetchTenantBookings({
+        userId: Number(currentUser.userId),
+        page: page + 1,
+        size: size,
+      })
+    );
   }, [dispatch, page, size]);
 
   // handle fetch previous page
@@ -133,19 +121,13 @@ let BookingsList: React.FC<Props> = () => {
       localStorage.getItem("dnap-user") as string
     );
 
-    try {
-      const result = await fetchData(
-        `/fetch-bookings-by-tenant/${Number(currentUser.userId)}/${
-          page - 1
-        }/${size}`
-      );
-      dispatch(resetTenantBookings(result.data));
-    } catch (error) {
-      if (axios.isCancel(error)) {
-        console.log("FETCH BOOKINGS CANCELLED ", error.message);
-      }
-      console.error("Error fetching bookings: ", error);
-    }
+    dispatch(
+      fetchTenantBookings({
+        userId: Number(currentUser.userId),
+        page: page - 1,
+        size: size,
+      })
+    );
   }, [dispatch, page, size]);
 
   if (status === "loading") return <Preloader />;
@@ -155,7 +137,7 @@ let BookingsList: React.FC<Props> = () => {
     <div className="users-list flex w-full py-2 h-svh lg:h-dvh mt-24 lg:mt-0 z-0">
       <div className="list w-full bg-gray-100 relative">
         <div className="bg-white w-full shadow-lg">
-          <div className="w-full h-1/3 flex flex-wrap justify-end items-center px-10 py-3">
+          <div className="w-full h-1/3 flex flex-wrap justify-end items-center px-2 lg:px-10 py-3">
             <div className="w-full lg:w-2/3 flex flex-wrap justify-between items-center">
               <div className="w-full lg:w-1/2 flex justify-between lg:justify-around items-center font-bold">
                 <h1 className="text-lg text-blue-900">Bookings</h1>
@@ -183,21 +165,25 @@ let BookingsList: React.FC<Props> = () => {
           </div>
         </div>
 
-        <div className="lg:px-5 mb-12 h-[calc(100vh-170px)] overflow-auto pb-5 relative">
+        <div className="lg:px-5 mb-12 h-[calc(100vh-170px)] overflow-auto py-5 relative">
           {filteredBookings.length > 0 ? (
             <table className="border-2 w-full bg-white text-start">
               <thead className="sticky top-0 bg-blue-900 text-white">
                 <tr>
-                  <th className="px-2">No.</th>
-                  <th className="px-2">Accommodation</th>
-                  <th className="px-2">Unit No.</th>
-                  <th className="px-2">Facility</th>
-                  <th className="px-2">Tel</th>
-                  <th className="px-2">Email</th>
-                  <th className="px-2">Amount</th>
-                  <th className="px-2">Payment type</th>
-                  <th className="px-2">Checkin</th>
-                  <th className="px-2">Date</th>
+                  {/* <th className="p-2 text-start font-bold">No.</th> */}
+                  <th className="p-2 text-start font-bold">
+                    Accommodation Category
+                  </th>
+                  <th className="p-2 text-start font-bold">Unit Number</th>
+                  <th className="p-2 text-start font-bold">Facility Name</th>
+                  <th className="p-2 text-start font-bold">
+                    Facility Telephone
+                  </th>
+                  <th className="p-2 text-start font-bold">Facility Email</th>
+                  <th className="p-2 text-start font-bold">Booking Amount</th>
+                  <th className="p-2 text-start font-bold">Payment method</th>
+                  <th className="p-2 text-start font-bold">Expected CheckIn</th>
+                  <th className="p-2 text-start font-bold">Transaction Date</th>
                 </tr>
               </thead>
               <tbody>
@@ -207,15 +193,7 @@ let BookingsList: React.FC<Props> = () => {
               </tbody>
             </table>
           ) : (
-            <div className="w-ull h-full flex justify-center items-center">
-              <div
-                className="w-32 h-32"
-                style={{
-                  background: "URL('/images/Ghost.gif')",
-                  backgroundSize: "cover",
-                }}
-              ></div>
-            </div>
+            <EmptyList itemName="booking" />
           )}
         </div>
         <PaginationButtons

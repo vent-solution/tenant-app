@@ -28,7 +28,7 @@ let ReceiptRow: React.FC<Props> = ({ receipt, onClick }) => {
 
   return (
     <tr
-      className="cursor-pointer text-sm text-center border-y-2 hover:bg-gray-100 font-extralight"
+      className="cursor-pointer text-sm text-start border-y-2 hover:bg-gray-100 font-extralight"
       onClick={() => onClick()}
     >
       <td className="px-2 py-5">{receipt.receiptNumber}</td>

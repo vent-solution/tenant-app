@@ -18,7 +18,7 @@ interface Props {}
 const SettingsPage: React.FC<Props> = () => {
   // LOCAL STATES
   const [showForm, setShowForm] = useState<boolean>(false);
-  const [navLinks] = useState<NavLinkModel[]>([
+  const [navLinks, setNavLinks] = useState<NavLinkModel[]>([
     {
       icon: <MdDashboard />,
       name: "Dashboard",
@@ -107,7 +107,7 @@ const SettingsPage: React.FC<Props> = () => {
   return (
     <div className="main flex relative w-full">
       <div className="left lg:w-1/5 w-full md:w-full left-0 right-0 fixed lg:relative text-white z-50">
-        <SideBar navLinks={navLinks} />
+        <SideBar navLinks={navLinks} setNavLinks={setNavLinks} />
       </div>
       <div className="right relative lg:w-4/5 w-full z-0 flex flex-wrap justify-between items-start ">
         <div className="w-full lg:w-2/3 h-full py-20 lg:py-5 flex flex-wrap justify-center ">

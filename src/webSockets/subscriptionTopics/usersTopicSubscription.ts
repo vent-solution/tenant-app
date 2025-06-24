@@ -26,7 +26,7 @@ export const usersTopicSubscription = (
     }
 
     if (content.userId === currentUser.userId) {
-      logoutAction(currentUser, setLoading, dispatch);
+      logoutAction(setLoading, dispatch);
     }
   });
 };

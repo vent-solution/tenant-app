@@ -9,13 +9,12 @@ import { NavLinkModel } from "../users/models/navLinkModel";
 import { UserModel } from "../users/models/userModel";
 import FacilitiesForSale from "./FacilitiesForSale";
 import { TbBrandBooking } from "react-icons/tb";
-import { IoDiamondSharp } from "react-icons/io5";
 import { FaReceipt } from "react-icons/fa6";
 
 interface Props {}
 
 const FacilitiesForSalePage: React.FC<Props> = () => {
-  const [navLinks] = useState<NavLinkModel[]>([
+  const [navLinks, setNavLinks] = useState<NavLinkModel[]>([
     {
       icon: <MdDashboard />,
       name: "Home",
@@ -91,7 +90,7 @@ const FacilitiesForSalePage: React.FC<Props> = () => {
   return (
     <div className="main flex relative w-full">
       <div className="left lg:w-1/4 w-full md:w-full left-0 right-0 fixed lg:relative text-white z-50">
-        <SideBar navLinks={navLinks} />
+        <SideBar navLinks={navLinks} setNavLinks={setNavLinks} />
       </div>
       <div className="right lg:w-full w-full h-svh px-0 lg:px-0 py-0 overflow-y-auto  mt-0 lg:mt-0">
         <div className="flex w-full h-svh lg:h-dvh mt-20 lg:mt-0 z-0 bg-gray-100">

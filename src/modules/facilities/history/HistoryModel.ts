@@ -1,5 +1,5 @@
 import { AccommodationModel } from "../../accommodations/AccommodationModel";
-import { TenantModel } from "../../tenants/TenantModel";
+import { TenantModel } from "../../auth/TenantModel";
 import { FacilitiesModel } from "../FacilityModel";
 
 export interface HistoryModel {

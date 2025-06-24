@@ -24,18 +24,20 @@ let Log: React.FC<Props> = ({ log, logIndex }) => {
     : "";
 
   return (
-    <tr className="cursor-pointer text-sm text-center border-y-2 hover:bg-gradient-to-b  hover:from-gray-100 hover:via-gray-100 hover:to-gray-100  bg-gradient-to-b from-white to-white">
-      <td className="px-2 py-8">{logIndex + 1}</td>
+    <tr className="cursor-pointer text-sm text-start border-y-2 hover:bg-gradient-to-b  hover:from-gray-100 hover:via-gray-100 hover:to-gray-100  bg-gradient-to-b from-white to-white">
+      {/* <td className="px-2 py-8">{logIndex + 1}</td> */}
       {/* <td className="px-2">{"LOG-" + log.logId}</td> */}
 
-      <td className="px-2">{log.user?.userId && "USR-" + log.user?.userId}</td>
+      <td className="px-2 pt-5">
+        {log.user?.userId && "USR-" + log.user?.userId}
+      </td>
 
       <td className="px-2">
         {log.user?.firstName && log.user?.firstName + " " + log.user?.lastName}
       </td>
       <td className="px-2">{log.user?.userRole && log.user?.userRole}</td>
       <td className="px-2">{log.activity}</td>
-      <td className="px-2 w-52 py-5">{log.description}</td>
+      <td className="px-2 w-96 pt-5">{log.description}</td>
       <td
         className={`px-2 text-lg ${
           log.status === "failed" ? "text-red-500" : "text-green-600"

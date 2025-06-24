@@ -1,14 +1,16 @@
 import { AccommodationModel } from "../accommodations/AccommodationModel";
+import { TenantModel } from "../auth/TenantModel";
 import { FacilitiesModel } from "../facilities/FacilityModel";
-import { TenantModel } from "../tenants/TenantModel";
 
 export interface RentModel {
   rentId?: number;
   amount: number;
+  dollarRate: number;
+  facilityCurrencyRate: number;
   currency: string;
   paymentType: string;
   transactionDate: string;
-  period: number;
+  periods: number;
 
   balance: number;
   transactionStatus?: string;
@@ -22,6 +24,8 @@ export interface RentModel {
 // CREATION RENT MODEL
 export interface CreationRentModel {
   amount: number | null;
+  dollarRate: number | null;
+  facilityCurrencyRate: number | null;
   currency: string | null;
   paymentType: string | null;
   transactionDate?: string | null;

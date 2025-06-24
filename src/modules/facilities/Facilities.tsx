@@ -8,7 +8,6 @@ import { FacilitiesModel } from "./FacilityModel";
 import { getFacilities, resetFacilities } from "./FacilitiesSlice";
 import { FaSearch } from "react-icons/fa";
 import FacilitiesTable from "./FacilitiesTable";
-import FacilityForm from "./FacilityForm";
 import { UserRoleEnum } from "../../global/enums/userRoleEnum";
 import { UserModel } from "../users/models/userModel";
 
@@ -72,7 +71,7 @@ const Facilities: React.FC<Props> = () => {
             facilityName,
             facilityCategory,
             dateCreated,
-            contact: { telephone1, telephone2, email },
+            contact: { telephone1, email },
             facilityLocation: { country, city },
           } = facility;
 
@@ -92,7 +91,6 @@ const Facilities: React.FC<Props> = () => {
             (country && country.toLowerCase().includes(searchTerm)) ||
             (city && city.toLowerCase().includes(searchTerm)) ||
             (telephone1 && telephone1.toLowerCase().includes(searchTerm)) ||
-            (telephone2 && telephone2.toLowerCase().includes(searchTerm)) ||
             (email && email.toLowerCase().includes(searchTerm)) ||
             (facilityDateAdded &&
               facilityDateAdded.toLowerCase().includes(searchTerm))
@@ -216,17 +214,13 @@ const Facilities: React.FC<Props> = () => {
               </div>
             )}
           </div>
-          {!isAddFacility ? (
-            <FacilitiesTable
-              filteredFacilities={filteredFacilities}
-              page={page}
-              totalPages={totalPages}
-              handleFetchNextPage={handleFetchNextPage}
-              handleFetchPreviousPage={handleFetchPreviousPage}
-            />
-          ) : (
-            <FacilityForm toggelIsAddFacility={toggelIsAddFacility} />
-          )}
+          <FacilitiesTable
+            filteredFacilities={filteredFacilities}
+            page={page}
+            totalPages={totalPages}
+            handleFetchNextPage={handleFetchNextPage}
+            handleFetchPreviousPage={handleFetchPreviousPage}
+          />
         </div>
       </div>
     </div>

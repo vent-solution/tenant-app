@@ -53,21 +53,7 @@ export const fetchFacilitiesForSale = createAsyncThunk(
 const facilitiesForSaleSlice = createSlice({
   name: "facilitiesForSale",
   initialState,
-  reducers: {
-    resetFacilitiesForSale: {
-      reducer: (state, action: PayloadAction<StateModel>) => {
-        state.facilitiesForSale = action.payload.facilitiesForSale;
-        state.page = action.payload.page;
-        state.size = action.payload.size;
-        state.status = "succeeded";
-        state.error = null;
-      },
-
-      prepare: (facilitiesForSale: StateModel) => {
-        return { payload: facilitiesForSale };
-      },
-    },
-  },
+  reducers: {},
 
   extraReducers: (builder) => {
     builder.addCase(fetchFacilitiesForSale.pending, (state) => {
@@ -81,6 +67,8 @@ const facilitiesForSaleSlice = createSlice({
         state.facilitiesForSale = action.payload.facilitiesForSale;
         state.page = action.payload.page;
         state.size = action.payload.size;
+        state.totalElements = action.payload.totalElements;
+        state.totalPages = action.payload.totalPages;
         state.status = "succeeded";
         state.error = null;
       }
@@ -92,8 +80,6 @@ const facilitiesForSaleSlice = createSlice({
     });
   },
 });
-
-export const { resetFacilitiesForSale } = facilitiesForSaleSlice.actions;
 
 export const getFacilitiesForSale = (state: {
   facilitiesForSale: StateModel;

@@ -9,7 +9,7 @@ const Preloader: React.FC<Props> = () => {
   //   );
 
   return (
-    <div className="preloader">
+    <div className="preloader flex justify-center items-center fixed left-0 top-0 lg:left-24 z-50 w-full h-full">
       <div className="cube text-white text-lg font-bold">
         <div className="side side1 flex justify-center items-center p-1">
           Vent

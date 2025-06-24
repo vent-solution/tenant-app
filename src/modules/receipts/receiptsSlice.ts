@@ -65,21 +65,7 @@ export const fetchReceipts = createAsyncThunk(
 const receiptsSlice = createSlice({
   name: "receipts",
   initialState,
-  reducers: {
-    resetReceipts: {
-      reducer(state, action: PayloadAction<StateModel>) {
-        state.receipts = action.payload.receipts;
-        state.page = action.payload.page;
-        state.size = action.payload.size;
-        state.totalElements = action.payload.totalElements;
-        state.totalPages = action.payload.totalPages;
-      },
-
-      prepare(receiptsState: StateModel) {
-        return { payload: receiptsState };
-      },
-    },
-  },
+  reducers: {},
 
   extraReducers: (builder) => {
     builder
@@ -105,8 +91,6 @@ const receiptsSlice = createSlice({
       });
   },
 });
-
-export const { resetReceipts } = receiptsSlice.actions;
 
 export const getReceipts = (state: { receipts: StateModel }) => state.receipts;
 

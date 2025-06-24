@@ -1,5 +1,4 @@
 import React, { useState } from "react";
-import { FACILITY_IMAGES_URL } from "../../global/filesUrls";
 import ImageSlider from "../../global/ImageSlide";
 import {
   BUSINESS_TYPE_DATA,
@@ -8,6 +7,7 @@ import {
 } from "../../global/PreDefinedData/PreDefinedData";
 import { FormatMoney } from "../../global/actions/formatMoney";
 import { FacilitiesModel } from "../facilities/FacilityModel";
+import countriesList from "../../global/data/countriesList.json";
 
 interface Props {
   facility: FacilitiesModel;
@@ -24,7 +24,7 @@ let FacilityForSale: React.FC<Props> = ({
 
   return (
     <div
-      className="w-full px-2 p-10 flex flex-wrap items-center border-b-2 lg:border-b lg:hover:bg-gray-100 transition duration-1000 ease-in-out cursor-pointer hover:shadow-lg"
+      className="w-full px-2 py-10 flex flex-wrap items-center border-b-2 lg:border-b lg:hover:bg-gray-100 transition duration-1000 ease-in-out cursor-pointer hover:shadow-lg"
       onClick={() => {
         setSelectedFacilityId(Number(facility.facilityId));
         setIsShowFacilityDetails(true);
@@ -33,13 +33,10 @@ let FacilityForSale: React.FC<Props> = ({
       <div className="w-full lg:w-1/4">
         {
           <ImageSlider
-            imageUrl={`${FACILITY_IMAGES_URL}/${facility.facilityId}`}
+            imageUrl={`${process.env.REACT_APP_FACILITY_IMAGES_URL}/${facility.facilityId}`}
             currentIndex={currentIndex}
             setCurrentIndex={setCurrentIndex}
-            images={facility.facilityImages?.map((img, index) => ({
-              imageId: index + 1,
-              imageName: img.imageName,
-            }))}
+            images={facility.facilityImages}
           />
         }
       </div>
@@ -68,7 +65,12 @@ let FacilityForSale: React.FC<Props> = ({
             )?.label
           }{" "}
           {<span>for sale in </span>}
-          {facility.facilityLocation.city} {facility.facilityLocation.country}
+          {facility.facilityLocation.city}{" "}
+          {
+            countriesList.find(
+              (country) => country.value === facility.facilityLocation.country
+            )?.label
+          }
         </h1>
 
         <h6 className="text-sm text-gray-500">

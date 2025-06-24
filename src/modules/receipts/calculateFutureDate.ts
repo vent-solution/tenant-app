@@ -50,7 +50,7 @@ export const calculateFutureDate = (
     String(paymentPattern) ===
     String(
       PaymentPartern.daily ||
-        String(paymentPattern) === String(PaymentPartern.perNigt)
+        String(paymentPattern) === String(PaymentPartern.perNight)
     )
   ) {
     return new Date(

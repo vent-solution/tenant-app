@@ -7,17 +7,16 @@ import {
   PAYMENT_PARTERN,
 } from "../../global/PreDefinedData/PreDefinedData";
 import { FormatMoney } from "../../global/actions/formatMoney";
+import countriesList from "../../global/data/countriesList.json";
 
 interface Props {
   accommodation: AccommodationModel;
   checkIn: string | undefined;
-  accommodationIndex: number;
   onClick: () => void;
 }
 
 const Accommodattion: React.FC<Props> = ({
   accommodation,
-  accommodationIndex,
   checkIn,
   onClick,
 }) => {
@@ -38,21 +37,16 @@ const Accommodattion: React.FC<Props> = ({
 
   return (
     <tr
-      className="cursor-pointer text-sm text-center border-y-2 hover:bg-gray-100"
+      className="cursor-pointer text-sm text-start border-y-2 hover:bg-gray-100"
       onClick={() => {
         onClick();
       }}
     >
-      <td className="py-5">{accommodationIndex + 1}</td>
+      {/* <td className="py-5">{accommodationIndex + 1}</td> */}
       <td>
-        {accommodation.facility.facilityName +
-          ",  " +
-          accommodation.facility.facilityLocation.city +
-          " " +
-          accommodation.facility.facilityLocation.country}
+        {`(FAC-${accommodation.facility.facilityId}) ${accommodation.facility.facilityName}, ${accommodation.facility.facilityLocation.city} ${accommodation.facility.facilityLocation.country}`}
       </td>
       <td>{accommodation.accommodationNumber}</td>
-      <td>{accommodation.floor}</td>
       <td>
         {
           ACCOMMODATION_TYPE_DATA.find(
@@ -60,6 +54,8 @@ const Accommodattion: React.FC<Props> = ({
           )?.label
         }
       </td>
+      <td>{accommodation.floor}</td>
+
       <td className="font-mono font-bold">
         {FormatMoney(
           Number(accommodation.price),
@@ -73,6 +69,7 @@ const Accommodattion: React.FC<Props> = ({
         }
       </td>
 
+      <td>{checkInDetails}</td>
       <td>{checkInDetails}</td>
     </tr>
   );

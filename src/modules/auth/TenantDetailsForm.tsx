@@ -1,20 +1,16 @@
 import React from "react";
-import { TenantCreationModel } from "./TenantModel";
 import axios from "axios";
 import { postData } from "../../global/api";
 import { useDispatch } from "react-redux";
 import { AppDispatch } from "../../app/store";
 import { setAlert } from "../../other/alertSlice";
 import { AlertTypeEnum } from "../../global/enums/alertTypeEnum";
-import {
-  ADDRESS_TYPE,
-  NATIONAL_ID_TYPE,
-} from "../../global/PreDefinedData/PreDefinedData";
+import { NATIONAL_ID_TYPE } from "../../global/PreDefinedData/PreDefinedData";
 import AlertMessage from "../../other/alertMessage";
 
-import countryList from "../../global/data/countriesList.json";
 import checkRequiredFormFields from "../../global/validation/checkRequiredFormFields";
 import { useNavigate } from "react-router-dom";
+import { TenantCreationModel } from "./TenantModel";
 
 interface Props {
   tenant: TenantCreationModel;
@@ -65,13 +61,13 @@ const TenantDetailsForm: React.FC<Props> = ({ tenant, setTenant }) => {
       tenant.idType.trim().length < 1 ||
       !tenant.nationalId ||
       tenant.nationalId.trim().length < 1 ||
-      !tenant.nextOfKin?.addressType ||
-      tenant.nextOfKin.addressType.trim().length < 1 ||
-      !tenant.nextOfKin.address?.country ||
-      tenant.nextOfKin.address?.country.trim().length < 1 ||
-      !tenant.nextOfKin.address?.city ||
-      tenant.nextOfKin.address?.city.trim().length < 1 ||
-      !tenant.nextOfKin.nokTelephone ||
+      // !tenant.nextOfKin?.addressType ||
+      // tenant.nextOfKin.addressType.trim().length < 1 ||
+      // !tenant.nextOfKin.address?.country ||
+      // tenant.nextOfKin.address?.country.trim().length < 1 ||
+      // !tenant.nextOfKin.address?.city ||
+      // tenant.nextOfKin.address?.city.trim().length < 1 ||
+      !tenant.nextOfKin?.nokTelephone ||
       tenant.nextOfKin.nokTelephone.trim().length < 1 ||
       !tenant.nextOfKin?.nokName ||
       tenant.nextOfKin.nokName.trim().length < 1
@@ -79,12 +75,12 @@ const TenantDetailsForm: React.FC<Props> = ({ tenant, setTenant }) => {
       checkRequiredFormFields([
         idType,
         nationalId,
-        addressType,
-        country,
-        city,
+        // addressType,
+        // country,
+        // city,
         NOKtelephone,
-        NOKIdType,
-        NOKNationalId,
+        // NOKIdType,
+        // NOKNationalId,
         nokName,
       ]);
     }
@@ -125,11 +121,11 @@ const TenantDetailsForm: React.FC<Props> = ({ tenant, setTenant }) => {
 
   return (
     <form
-      className="login-for relative  flex flex-wrap justify-center items-start bg-blue-950 text-sm min-h-svh p-10"
+      className="login-for relative  flex flex-wrap justify-center items-start bg-blue-950 text-sm min-h-svh py-10 px-3 lg:px-24"
       action=""
       onSubmit={(e: React.FormEvent) => e.preventDefault()}
     >
-      <div className=" text-white w-full lg:w-1/3 p-3 lg:p-5  flex flex-wrap justify-center items-center lg:h-svh lg:sticky top-0 lg:py-32">
+      <div className=" text-white w-full lg:w-1/3 p-5  flex flex-wrap justify-center items-center lg:h-svh lg:sticky top-0 lg:py-32">
         <div className="w-full flex justify-start items-end">
           <img
             className="w-14 lg:w-20 h-14 lg:h-20"
@@ -149,15 +145,15 @@ const TenantDetailsForm: React.FC<Props> = ({ tenant, setTenant }) => {
         <h1 className="text-xs w-full text-start">&copy; vent solutions</h1>
       </div>
 
-      <div className="flex flex-wrap justify-between w-full lg:w-2/3 text-white">
+      <div className="flex flex-wrap justify-between w-full lg:w-2/3 text-white px-10">
         <h1 className="text-3xl font-bold w-full">
           Complete your tenant details
         </h1>
 
         {/* company name form input field */}
-        <div className="form-group w-full p-5  shadow-lg">
+        <div className="form-group w-full py-5 px-2  shadow-lg">
           <label htmlFor="companyName" className="w-full font-bold">
-            Company name <span className="text-red-600"></span>
+            Company name <span className="text-red-600">(optional)</span>
           </label>
           <input
             type="text"
@@ -170,7 +166,7 @@ const TenantDetailsForm: React.FC<Props> = ({ tenant, setTenant }) => {
         </div>
 
         {/* national ID number form input field */}
-        <div className="form-group w-full lg:w-1/2 p-5  shadow-lg">
+        <div className="form-group w-full lg:w-1/2 py-5 px-2  shadow-lg">
           <label htmlFor="nationalId" className="w-full font-bold">
             ID number <span className="text-red-600">*</span>
           </label>
@@ -185,7 +181,7 @@ const TenantDetailsForm: React.FC<Props> = ({ tenant, setTenant }) => {
         </div>
 
         {/* national ID type form input field */}
-        <div className="form-group w-full lg:w-1/2 p-5  shadow-lg">
+        <div className="form-group w-full lg:w-1/2 py-5 px-2  shadow-lg">
           <label htmlFor="idType" className="w-full font-bold">
             ID type <span className="text-red-600">*</span>
           </label>
@@ -208,7 +204,7 @@ const TenantDetailsForm: React.FC<Props> = ({ tenant, setTenant }) => {
         <h1 className="w-full text-xl font-bold pt-10">Next of Kin</h1>
 
         {/* next of kin full name form input field */}
-        <div className="form-group w-full p-5  shadow-lg">
+        <div className="form-group w-full py-5 px-2  shadow-lg">
           <label htmlFor="fullName" className="w-full font-bold">
             Full name <span className="text-red-600">*</span>
           </label>
@@ -228,9 +224,9 @@ const TenantDetailsForm: React.FC<Props> = ({ tenant, setTenant }) => {
         </div>
 
         {/* next of kin email form input field */}
-        <div className="form-group w-full lg:w-1/2 p-5  shadow-lg">
+        <div className="form-group w-full lg:w-1/2 py-5 px-2  shadow-lg">
           <label htmlFor="nokEmail" className="w-full font-bold">
-            Email <span className="text-red-600"></span>
+            Email <span className="text-red-600">(optional)</span>
           </label>
           <input
             type="text"
@@ -274,7 +270,7 @@ const TenantDetailsForm: React.FC<Props> = ({ tenant, setTenant }) => {
         </div>
 
         {/* next of kin ID form input field */}
-        <div className="form-group w-full lg:w-1/2 p-5  shadow-lg">
+        {/* <div className="form-group w-full lg:w-1/2 py-5 px-2  shadow-lg">
           <label htmlFor="nokNationalId" className="w-full font-bold">
             ID number <span className="text-red-600">*</span>
           </label>
@@ -293,10 +289,10 @@ const TenantDetailsForm: React.FC<Props> = ({ tenant, setTenant }) => {
           <small className="w-full text-red-200">
             Next of kin's ID number is required!
           </small>
-        </div>
+        </div> */}
 
         {/* next of kin national ID type form input field */}
-        <div className="form-group w-full lg:w-1/2 p-5  shadow-lg">
+        {/* <div className="form-group w-full lg:w-1/2 py-5 px-2  shadow-lg">
           <label htmlFor="nokIdType" className="w-full font-bold">
             ID type
             <span className="text-red-600">*</span>
@@ -320,13 +316,13 @@ const TenantDetailsForm: React.FC<Props> = ({ tenant, setTenant }) => {
           <small className="w-full text-red-200">
             Next of kin's ID type is required!
           </small>
-        </div>
+        </div> */}
 
         {/* tenant's next of kin address */}
-        <h1 className="text-lg font-bold pt-5 w-full">Next of kin address</h1>
+        {/* <h1 className="text-lg font-bold pt-5 w-full">Next of kin address</h1> */}
 
         {/* next of kin address type form input field */}
-        <div className="form-group w-full lg:w-1/2 p-5  shadow-lg">
+        {/* <div className="form-group w-full lg:w-1/2 py-5 px-2  shadow-lg">
           <label htmlFor="addressType" className="w-full font-bold">
             Address type <span className="text-red-600">*</span>
           </label>
@@ -349,10 +345,10 @@ const TenantDetailsForm: React.FC<Props> = ({ tenant, setTenant }) => {
           <small className="w-full text-red-200">
             Next of kin's address type is required!
           </small>
-        </div>
+        </div> */}
 
         {/* next of kin country form input field */}
-        <div className="form-group w-full lg:w-1/2 p-5  shadow-lg">
+        {/* <div className="form-group w-full lg:w-1/2 py-5 px-2  shadow-lg">
           <label htmlFor="country" className="w-full font-bold">
             Country <span className="text-red-600">*</span>
           </label>
@@ -380,10 +376,10 @@ const TenantDetailsForm: React.FC<Props> = ({ tenant, setTenant }) => {
             ))}
           </select>
           <small className="w-full text-red-200">Country is required!</small>
-        </div>
+        </div> */}
 
         {/* next of kin state form input field */}
-        <div className="form-group w-full lg:w-1/2 p-5  shadow-lg">
+        {/* <div className="form-group w-full lg:w-1/2 py-5 px-2  shadow-lg">
           <label htmlFor="state" className="w-full font-bold">
             State <span className="text-red-600"></span>
           </label>
@@ -406,10 +402,10 @@ const TenantDetailsForm: React.FC<Props> = ({ tenant, setTenant }) => {
             }
           />
           <small className="w-full"></small>
-        </div>
+        </div> */}
 
         {/* next of kin city form input field */}
-        <div className="form-group w-full lg:w-1/2 p-5  shadow-lg">
+        {/* <div className="form-group w-full lg:w-1/2 py-5 px-2  shadow-lg">
           <label htmlFor="city" className="w-full font-bold">
             City/Municipality/District <span className="text-red-600">*</span>
           </label>
@@ -434,10 +430,10 @@ const TenantDetailsForm: React.FC<Props> = ({ tenant, setTenant }) => {
           <small className="w-full text-red-200">
             City/Municipality/District is required!
           </small>
-        </div>
+        </div> */}
 
         {/* next of kin county form input field */}
-        <div className="form-group w-full lg:w-1/2 p-5  shadow-lg">
+        {/* <div className="form-group w-full lg:w-1/2 py-5 px-2  shadow-lg">
           <label htmlFor="county" className="w-full font-bold">
             County <span className="text-red-600"></span>
           </label>
@@ -460,10 +456,10 @@ const TenantDetailsForm: React.FC<Props> = ({ tenant, setTenant }) => {
             }
           />
           <small className="w-full"></small>
-        </div>
+        </div> */}
 
         {/* next of kin division form input field */}
-        <div className="form-group w-full lg:w-1/2 p-5  shadow-lg">
+        {/* <div className="form-group w-full lg:w-1/2 py-5 px-2  shadow-lg">
           <label htmlFor="division" className="w-full font-bold">
             Division / Sub county <span className="text-red-600"></span>
           </label>
@@ -486,10 +482,10 @@ const TenantDetailsForm: React.FC<Props> = ({ tenant, setTenant }) => {
             }
           />
           <small className="w-full"></small>
-        </div>
+        </div> */}
 
         {/* next of kin parish form input field */}
-        <div className="form-group w-full lg:w-1/2 p-5  shadow-lg">
+        {/* <div className="form-group w-full lg:w-1/2 py-5 px-2  shadow-lg">
           <label htmlFor="parish" className="w-full font-bold">
             Parish / Ward <span className="text-red-600"></span>
           </label>
@@ -512,10 +508,10 @@ const TenantDetailsForm: React.FC<Props> = ({ tenant, setTenant }) => {
             }
           />
           <small className="w-full"></small>
-        </div>
+        </div> */}
 
         {/* next of kin zone form input field */}
-        <div className="form-group w-full lg:w-1/2 p-5  shadow-lg">
+        {/* <div className="form-group w-full lg:w-1/2 py-5 px-2  shadow-lg">
           <label htmlFor="zone" className="w-full font-bold">
             Zone / Village / LC1 <span className="text-red-600"></span>
           </label>
@@ -538,10 +534,10 @@ const TenantDetailsForm: React.FC<Props> = ({ tenant, setTenant }) => {
             }
           />
           <small className="w-full"></small>
-        </div>
+        </div> */}
 
         {/* next of kin street form input field */}
-        <div className="form-group w-full lg:w-1/2 p-5  shadow-lg">
+        {/* <div className="form-group w-full lg:w-1/2 py-5 px-2  shadow-lg">
           <label htmlFor="street" className="w-full font-bold">
             Street <span className="text-red-600"></span>
           </label>
@@ -564,10 +560,10 @@ const TenantDetailsForm: React.FC<Props> = ({ tenant, setTenant }) => {
             }
           />
           <small className="w-full"></small>
-        </div>
+        </div> */}
 
         {/* next of kin plotNumber form input field */}
-        <div className="form-group w-full lg:w-1/2 p-5  shadow-lg">
+        {/* <div className="form-group w-full lg:w-1/2 py-5 px-2  shadow-lg">
           <label htmlFor="plotNumber" className="w-full font-bold">
             Plot Number <span className="text-red-600"></span>
           </label>
@@ -590,7 +586,7 @@ const TenantDetailsForm: React.FC<Props> = ({ tenant, setTenant }) => {
             }
           />
           <small className="w-full"></small>
-        </div>
+        </div> */}
 
         {/* button for saving tenant */}
         <div className="form-group w-full py-5 flex justify-center items-center">

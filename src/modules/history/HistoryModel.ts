@@ -1,6 +1,6 @@
 import { AccommodationModel } from "../accommodations/AccommodationModel";
+import { TenantModel } from "../auth/TenantModel";
 import { FacilitiesModel } from "../facilities/FacilityModel";
-import { TenantModel } from "../tenants/TenantModel";
 
 export interface HistoryModel {
   historyId?: number;

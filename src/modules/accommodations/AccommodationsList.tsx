@@ -1,4 +1,3 @@
-import axios from "axios";
 import React, { useCallback, useEffect, useState } from "react";
 import { FaSearch } from "react-icons/fa";
 import { useDispatch, useSelector } from "react-redux";
@@ -6,20 +5,19 @@ import { AccommodationModel } from "./AccommodationModel";
 import {
   fetchAccommodationsByTenant,
   getTenantAccommodations,
-  resetTenantAccommodations,
 } from "./tenantAccommodationsSlice";
 import Accommodation from "./Accommodation";
 import AccommodationDetails from "./AccommodationDetails";
 import { AppDispatch } from "../../app/store";
-import { fetchData } from "../../global/api";
 import PaginationButtons from "../../global/PaginationButtons";
 import { HistoryModel } from "../facilities/history/HistoryModel";
 import { UserModel } from "../users/models/userModel";
 import Preloader from "../../other/Preloader";
+import EmptyList from "../../global/EnptyList";
 
 interface Props {}
 
-const Accommodations: React.FC<Props> = () => {
+let Accommodations: React.FC<Props> = () => {
   const [searchString, setSearchString] = useState<string>("");
   const [filteredTenantAccommodations, setFilteredTenantAccommodations] =
     useState<HistoryModel[]>([]);
@@ -27,7 +25,7 @@ const Accommodations: React.FC<Props> = () => {
   const [showAccommodationDetails, setShowAccommodationDetails] =
     useState<boolean>(false);
   const [currentAccommodation, setCurrentAccommodation] =
-    useState<AccommodationModel>();
+    useState<HistoryModel>();
 
   const dispatch = useDispatch<AppDispatch>();
   const accommodationState = useSelector(getTenantAccommodations);
@@ -123,19 +121,13 @@ const Accommodations: React.FC<Props> = () => {
       localStorage.getItem("dnap-user") as string
     );
 
-    try {
-      const result = await fetchData(
-        `/fetch-accommodations-by-tenant/${Number(currentUser.userId)}/${
-          page + 1
-        }/${size}`
-      );
-      dispatch(resetTenantAccommodations(result.data));
-    } catch (error) {
-      if (axios.isCancel(error)) {
-        console.log("FETCH ACCOMMODATIONS CANCELLED ", error.message);
-      }
-      console.error("Error fetching accommodations: ", error);
-    }
+    dispatch(
+      fetchAccommodationsByTenant({
+        userId: Number(currentUser.userId),
+        page: page + 1,
+        size: 25,
+      })
+    );
   }, [dispatch, page, size]);
 
   // handle fetch previous page
@@ -144,20 +136,13 @@ const Accommodations: React.FC<Props> = () => {
       localStorage.getItem("dnap-user") as string
     );
 
-    try {
-      const result = await fetchData(
-        `/fetch-accommodations-by-tenant/${Number(currentUser.userId)}/${
-          page - 1
-        }/${size}`
-      );
-      console.log(result);
-      dispatch(resetTenantAccommodations(result.data));
-    } catch (error) {
-      if (axios.isCancel(error)) {
-        console.log("FETCH ACCOMMODATIONS CANCELLED ", error.message);
-      }
-      console.error("Error fetching accommodations: ", error);
-    }
+    dispatch(
+      fetchAccommodationsByTenant({
+        userId: Number(currentUser.userId),
+        page: page - 1,
+        size: 25,
+      })
+    );
   }, [dispatch, page, size]);
 
   // show and hide accommodation details
@@ -171,7 +156,7 @@ const Accommodations: React.FC<Props> = () => {
     return (
       <div className="h-[calc(100vh-0px)] lg:px-5 overflow-auto w-full">
         <AccommodationDetails
-          accommodation={currentAccommodation}
+          history={currentAccommodation}
           toggleShowAccommodationDetails={toggleShowAccommodationDetails}
         />
       </div>
@@ -182,9 +167,10 @@ const Accommodations: React.FC<Props> = () => {
       {!showAccommodationDetails && (
         <div className="w-full bg-gray-200 relative h-full">
           <div className="w-full">
-            <div className="w-full h-1/3 flex flex-wrap justify-end items-center px-10 py-3 bg-white mb-5 mt-16 lg:mt-0">
+            <div className="w-full h-1/3 flex flex-wrap justify-end items-center px-3 lg:px-10 py-3 bg-white mb-5 mt-16 lg:mt-0">
               <div className="w-full lg:w-3/4 flex flex-wrap justify-between items-center">
                 <div className="w-full lg:w-1/2 flex justify-between lg:justify-around items-center font-bold">
+                  <h1 className="text-lg">My accommodations</h1>
                   <h1 className="text-lg">
                     {tenantAccommodations.length + "/" + totalElements}
                   </h1>
@@ -217,13 +203,18 @@ const Accommodations: React.FC<Props> = () => {
               <table className="border-2 w-full bg-white shadow-lg">
                 <thead className="sticky top-0 bg-blue-900 text-base text-white">
                   <tr>
-                    <th className="px-2">#</th>
-                    <th className="px-2">Facility</th>
-                    <th className="px-2">Number</th>
-                    <th className="px-2">Floor</th>
-                    <th className="px-2">Type</th>
-                    <th className="px-2">Price</th>
-                    <th className="px-2">Check-In</th>
+                    {/* <th className="p-2 text-start font-bold">#</th> */}
+                    <th className="p-2 text-start font-bold">Facility</th>
+                    <th className="p-2 text-start font-bold">
+                      Accommodation Number
+                    </th>
+                    <th className="p-2 text-start font-bold">
+                      Accommodation Type
+                    </th>
+                    <th className="p-2 text-start font-bold">Floor</th>
+                    <th className="p-2 text-start font-bold">Price</th>
+                    <th className="p-2 text-start font-bold">Check-In</th>
+                    <th className="p-2 text-start font-bold">Payment expiry</th>
                   </tr>
                 </thead>
                 <tbody className="text-black font-light">
@@ -233,9 +224,8 @@ const Accommodations: React.FC<Props> = () => {
                         key={index}
                         checkIn={accommodation.checkIn}
                         accommodation={accommodation.accommodation}
-                        accommodationIndex={index}
                         onClick={() => {
-                          setCurrentAccommodation(accommodation.accommodation);
+                          setCurrentAccommodation(accommodation);
                           toggleShowAccommodationDetails();
                         }}
                       />
@@ -244,15 +234,7 @@ const Accommodations: React.FC<Props> = () => {
                 </tbody>
               </table>
             ) : (
-              <div className="w-ull h-full flex justify-center items-center">
-                <div
-                  className="w-32 h-32"
-                  style={{
-                    background: "URL('/images/Ghost.gif')",
-                    backgroundSize: "cover",
-                  }}
-                ></div>
-              </div>
+              <EmptyList itemName="accommodation" />
             )}
           </div>
           <PaginationButtons
@@ -266,5 +248,7 @@ const Accommodations: React.FC<Props> = () => {
     </div>
   );
 };
+
+Accommodations = React.memo(Accommodations);
 
 export default Accommodations;

@@ -17,9 +17,14 @@ import { RxCross2 } from "react-icons/rx";
 interface Props {
   userData: UserModel | null;
   toggleShowForm: () => void;
+  setUserData: React.Dispatch<React.SetStateAction<UserModel | null>>;
 }
 
-const AddUserForm: React.FC<Props> = ({ toggleShowForm, userData }) => {
+const AddUserForm: React.FC<Props> = ({
+  toggleShowForm,
+  userData,
+  setUserData,
+}) => {
   const { userId } = useParams();
   const navigate = useNavigate();
   const location = useLocation();
@@ -205,6 +210,8 @@ const AddUserForm: React.FC<Props> = ({ toggleShowForm, userData }) => {
         } else {
           navigate("/users");
         }
+        setUserData(result.data);
+        setUser(result.data);
         toggleShowForm();
         dispatch(updateUser({ id: userId, changes: result.data }));
       }

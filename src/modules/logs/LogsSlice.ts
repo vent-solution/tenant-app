@@ -57,22 +57,7 @@ const LogsSlice = createSlice({
   name: "logs",
   initialState,
 
-  reducers: {
-    // reset logs
-    resetLogs: {
-      reducer(state, action: PayloadAction<LogsState>) {
-        state.userLogs = action.payload.userLogs;
-        state.size = action.payload.size;
-        state.page = action.payload.page;
-        state.totalElements = action.payload.totalElements;
-        state.totalPages = action.payload.totalPages;
-      },
-
-      prepare(logsState: LogsState) {
-        return { payload: logsState };
-      },
-    },
-  },
+  reducers: {},
 
   // initial fetching of bids
   extraReducers: (builder) => {
@@ -101,7 +86,5 @@ const LogsSlice = createSlice({
 });
 
 export const getLogs = (state: { logs: LogsState }) => state.logs;
-
-export const { resetLogs } = LogsSlice.actions;
 
 export default LogsSlice.reducer;

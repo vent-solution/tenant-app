@@ -4,23 +4,18 @@ import { FaSearch } from "react-icons/fa";
 import Preloader from "../../other/Preloader";
 import { LogModel } from "./LogModel";
 import { AppDispatch } from "../../app/store";
-import axios from "axios";
-import { fetchData } from "../../global/api";
 import PaginationButtons from "../../global/PaginationButtons";
 import Log from "./Log";
-import { getLogs, resetLogs } from "./LogsSlice";
+import { getLogs } from "./LogsSlice";
 import { UserModel } from "../users/models/userModel";
-import { getUser } from "../users/usersSlice";
+import EmptyList from "../../global/EnptyList";
 
 interface Props {}
-
-const user: UserModel = JSON.parse(localStorage.getItem("dnap-user") as string);
 
 let LogsList: React.FC<Props> = () => {
   // local state variabes
   const [searchString, setSearchString] = useState<string>("");
   const [filteredLogs, setFilteredLogs] = useState<LogModel[]>([]);
-  const [currentUser] = useState<UserModel | null>(user);
 
   const dispatch = useDispatch<AppDispatch>();
   const logsState = useSelector(getLogs);
@@ -74,45 +69,23 @@ let LogsList: React.FC<Props> = () => {
 
   // handle fetch next page
   const handleFetchNextPage = useCallback(async () => {
-    const userIdList: number[] = [];
-    userIdList.push(Number(currentUser?.userId));
-    const IDs = Number(user.userId);
-
-    userIdList.push(IDs);
-    try {
-      const result = await fetchData(
-        `/fetch-landlord-user-logs/${userIdList}/${page + 1}/${size}`
-      );
-      if (result.data.status && result.data.status !== "OK") {
-      }
-      dispatch(resetLogs(result.data));
-    } catch (error) {
-      if (axios.isCancel(error)) {
-        console.log("FETCH LOGS CANCELLED ", error.message);
-      }
-    }
-  }, [dispatch, page, size, currentUser?.userId]);
+    const user: UserModel = JSON.parse(
+      localStorage.getItem("dnap-user") as string
+    );
+    dispatch(
+      fetchLogs({ userId: [Number(user?.userId)], page: page + 1, size: size })
+    );
+  }, [dispatch, page, size]);
 
   // handle fetch next page
   const handleFetchPreviousPage = useCallback(async () => {
-    const userIdList: number[] = [];
-    userIdList.push(Number(currentUser?.userId));
-    const IDs = Number(user.userId);
-
-    userIdList.push(IDs);
-    try {
-      const result = await fetchData(
-        `/fetch-landlord-user-logs/${userIdList}/${page - 1}/${size}`
-      );
-      if (result.data.status && result.data.status !== "OK") {
-      }
-      dispatch(resetLogs(result.data));
-    } catch (error) {
-      if (axios.isCancel(error)) {
-        console.log("FETCH LOGS CANCELLED ", error.message);
-      }
-    }
-  }, [dispatch, page, size, currentUser?.userId]);
+    const user: UserModel = JSON.parse(
+      localStorage.getItem("dnap-user") as string
+    );
+    dispatch(
+      fetchLogs({ userId: [Number(user?.userId)], page: page - 1, size: size })
+    );
+  }, [dispatch, page, size]);
 
   if (status === "loading") return <Preloader />;
   if (error !== null) return <h1>{error}</h1>;
@@ -121,14 +94,10 @@ let LogsList: React.FC<Props> = () => {
     <div className="users-list flex w-full h-svh lg:h-dvh mt-20 lg:mt-0 z-0 bg-gray-200">
       <div className="list w-full relative">
         <div className="bg-white w-full">
-          <div className="w-full h-1/3 flex flex-wrap justify-end items-center px-10 py-3 bg-white shadow-lg">
-            <div className="w-full lg:w-1/4">
-              <h1 className="text-blue-950 text-2xl">Activity logs</h1>
-            </div>
-
+          <div className="w-full h-1/3 flex flex-wrap justify-end items-center px-2 lg:px-10 py-3 bg-white shadow-lg">
             <div className="w-full lg:w-2/3 flex flex-wrap justify-between items-center">
               <div className="w-full lg:w-1/2 flex justify-between lg:justify-around items-center">
-                {/* <h1 className="text-xl text-blue-900">logs</h1> */}
+                <h1 className="text-blue-950 text-2xl">Activity logs</h1>
                 <h1 className="text-lg">
                   {filteredLogs.length + "/" + totalElements}
                 </h1>
@@ -158,15 +127,15 @@ let LogsList: React.FC<Props> = () => {
             <table className="border-2 w-full bg-cyan-50 bordered mt-3 shadow-xl">
               <thead className="sticky top-0 bg-blue-800 text-white">
                 <tr>
-                  <th className="px-2">#</th>
-                  {/* <th className="px-2">Log number</th> */}
-                  <th className="px-2">User number</th>
-                  <th className="px-2">User full name</th>
-                  <th className="px-2">User role</th>
-                  <th className="px-2">Activity</th>
-                  <th className="px-2">Description</th>
-                  <th className="px-2">Status</th>
-                  <th className="px-2">Log date</th>
+                  {/* <th className="p-2 text-start font-bold">#</th> */}
+                  {/* <th className="p-2 text-start font-bold">Log number</th> */}
+                  <th className="p-2 text-start font-bold">User number</th>
+                  <th className="p-2 text-start font-bold">User full name</th>
+                  <th className="p-2 text-start font-bold">User role</th>
+                  <th className="p-2 text-start font-bold">Activity</th>
+                  <th className="p-2 text-start font-bold">Description</th>
+                  <th className="p-2 text-start font-bold">Status</th>
+                  <th className="p-2 text-start font-bold">Log date</th>
                 </tr>
               </thead>
               <tbody className="text-black font-light">
@@ -176,15 +145,7 @@ let LogsList: React.FC<Props> = () => {
               </tbody>
             </table>
           ) : (
-            <div className="w-ull h-full flex justify-center items-center">
-              <div
-                className="w-32 h-32"
-                style={{
-                  background: "URL('/images/Ghost.gif')",
-                  backgroundSize: "cover",
-                }}
-              ></div>
-            </div>
+            <EmptyList itemName="activity log" />
           )}
         </div>
 
@@ -201,3 +162,10 @@ let LogsList: React.FC<Props> = () => {
 
 LogsList = React.memo(LogsList);
 export default LogsList;
+function fetchLogs(arg0: {
+  userId: number[];
+  page: number;
+  size: number;
+}): any {
+  throw new Error("Function not implemented.");
+}

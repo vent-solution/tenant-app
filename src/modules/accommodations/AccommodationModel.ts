@@ -1,5 +1,5 @@
+import { TenantModel } from "../auth/TenantModel";
 import { FacilitiesModel } from "../facilities/FacilityModel";
-import { TenantModel } from "../tenants/TenantModel";
 
 export interface AccommodationModel {
   accommodationId?: number;

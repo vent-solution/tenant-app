@@ -5,38 +5,73 @@ import { IoChevronForward } from "react-icons/io5";
 
 interface Props {
   navLink: NavLinkModel;
+  parentIndex: number;
+  setNavLinks: React.Dispatch<React.SetStateAction<NavLinkModel[]>>;
+  setShowLinks: React.Dispatch<React.SetStateAction<boolean>>;
 }
-const NavItem: React.FC<Props> = (navLink) => {
+const NavItem: React.FC<Props> = ({
+  navLink,
+  setShowLinks,
+  setNavLinks,
+  parentIndex,
+}) => {
+  const handleChildLinkClick = (parentIndex: number, childIndex: number) => {
+    setNavLinks((prevLinks) =>
+      prevLinks.map((parent, pIdx) => {
+        if (pIdx !== parentIndex) return parent;
+
+        return {
+          ...parent,
+          childLinks: parent.childLinks?.map((child, cIdx) => ({
+            ...child,
+            active: cIdx === childIndex,
+          })),
+        };
+      })
+    );
+  };
+
   return (
-    <>
+    <div className="w-full flex flex-wrap justify-end items-center">
       <Link
-        to={navLink.navLink.link}
+        to={navLink.link}
         className={`navLink w-full mt-1 p-2 flex flex-wrap items-center h-fit hover:bg-blue-900 hover:text-white rounded-md ${
-          navLink.navLink.active ? "bg-blue-900 text-white" : ""
+          navLink.active ? "bg-blue-900 text-white" : ""
         }`}
+        onClick={() => setShowLinks(false)}
       >
-        <span className="text-xl px-4 flex justify-between">
-          {navLink.navLink.icon}
+        <span className="text-xl pr-4 flex justify-between">
+          {navLink.icon}
         </span>
 
-        <span className="flex justify-between items-center w-3/4 tracking-widest text-sm">
-          {navLink.navLink.name} <IoChevronForward />
+        <span className="flex justify-between items-center w-5/6 tracking-widest text-sm">
+          {navLink.name} <IoChevronForward />
         </span>
       </Link>
 
-      {navLink.navLink.childLinks?.map((child, index) => (
+      {navLink.childLinks?.map((child, index) => (
         <Link
           key={index}
           to={child.link}
-          className={`navLink  w-full mt-1 p-1 pl-3 font-bold flex items-center h-fit hover:bg-blue-900  hover:text-white  ${
-            child.active ? "bg-blue-900 text-white " : ""
+          className={`navLink w-full mt-1 p-2 flex flex-wrap items-center h-fit hover:bg-blue-900 hover:text-white rounded-md ${
+            navLink.childLinks && navLink.childLinks[index].active
+              ? "bg-blue-900 text-white"
+              : ""
           }`}
+          onClick={() => {
+            setShowLinks(false);
+            handleChildLinkClick(parentIndex, index);
+          }}
         >
-          <span className="px-3">{child.icon}</span>
-          <span className="tracking-widest">{child.name}</span>
+          <span className="text-xl pr-4 flex justify-between">
+            {child.icon}
+          </span>
+          <span className="flex justify-between items-center w-5/6 tracking-widest text-sm">
+            {child.name}
+          </span>
         </Link>
       ))}
-    </>
+    </div>
   );
 };
 

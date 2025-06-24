@@ -18,6 +18,7 @@ import { accommodationsTopicSubscription } from "./webSockets/subscriptionTopics
 import { getUserLocation } from "./global/api";
 import LandingPage from "./modules/LandingPage";
 import AccommodationsPage from "./modules/accommodations/AccommodationsPage";
+import MoreUnitsPage from "./modules/home/MoreUnitsPages";
 
 function App() {
   const [, setLoading] = useState(false);
@@ -60,6 +61,10 @@ function App() {
         <Route path="users">
           <Route index element={<UsersPage />} />
           <Route path=":userId" element={<SingleUserPage />} />
+        </Route>
+
+        <Route path="facility">
+          <Route path=":facilityId" element={<MoreUnitsPage />} />
         </Route>
       </Route>
 

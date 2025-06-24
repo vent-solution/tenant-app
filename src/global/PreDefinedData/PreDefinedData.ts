@@ -112,7 +112,7 @@ export const PAYMENT_PARTERN: { label: string; value: string }[] = [
   { label: "Per month", value: PaymentPartern.monthly },
   { label: "Per week", value: PaymentPartern.weekly },
   { label: "Per day", value: PaymentPartern.daily },
-  { label: "Per Night", value: PaymentPartern.perNigt },
+  { label: "Per Night", value: PaymentPartern.perNight },
   { label: "Per hour", value: PaymentPartern.hourly },
 ];
 

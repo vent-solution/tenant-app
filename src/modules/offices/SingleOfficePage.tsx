@@ -19,7 +19,7 @@ import { PiBuildingsFill } from "react-icons/pi";
 
 const SingleOfficePage: React.FC = () => {
   // LOCAL STATES
-  const [navLinks] = useState<NavLinkModel[]>([
+  const [navLinks, setNavLinks] = useState<NavLinkModel[]>([
     {
       icon: <MdDashboard />,
       name: "Dashboard",
@@ -140,7 +140,7 @@ const SingleOfficePage: React.FC = () => {
   return (
     <div className="main max-h-screen overflow-auto lg:overflow-hidden flex relative w-full">
       <div className="left lg:w-1/5 w-full md:w-full left-0 right-0 fixed lg:relative text-white z-50">
-        <SideBar navLinks={navLinks} />
+        <SideBar navLinks={navLinks} setNavLinks={setNavLinks} />
       </div>
       <div className="right lg:w-4/5 w-full z-0 mt-20 lg:mt-0 px-2 lg:px-0">
         <div className="w-full flex flex-wrap justify-between items-center bg-blue-200 pt-2">

@@ -1,7 +1,12 @@
 import React from "react";
+import { FaExclamationCircle } from "react-icons/fa";
 interface Props {
   imageUrl: string;
-  images?: { imageName: string }[];
+  images?:
+    | {
+        imageName: string;
+      }[]
+    | undefined;
   currentIndex: number;
   setCurrentIndex: React.Dispatch<React.SetStateAction<number>>;
 }
@@ -30,19 +35,28 @@ let ImageSlider: React.FC<Props> = ({
     <div className="relative w-full h-full  z-0 p-2">
       {/* Carousel Images */}
       <div className="overflow-hidden relative h-full">
-        <div
-          className="flex transition-transform duration-1000 ease-in-out h-full"
-          style={{ transform: `translateX(-${currentIndex * 100}%)` }}
-        >
-          {images?.map((image, index) => (
-            <img
-              key={index}
-              src={`${imageUrl}/${image.imageName}`}
-              alt={`Slide ${index + 1}`}
-              className="w-full h-full flex-shrink-0 object-cover"
-            />
-          ))}
-        </div>
+        {images && images.length > 0 ? (
+          <div
+            className="flex transition-transform duration-1000 ease-in-out h-full"
+            style={{ transform: `translateX(-${currentIndex * 100}%)` }}
+          >
+            {images?.map((image, index) => (
+              <img
+                key={index}
+                src={`${imageUrl}/${image.imageName}`}
+                alt={`Slide ${index + 1}`}
+                className="w-full h-full flex-shrink-0 object-cover"
+              />
+            ))}
+          </div>
+        ) : (
+          <div className="w-full flex justify-center items-center">
+            <h1 className="flex items-center  text-red-500">
+              <FaExclamationCircle className="text-xl" />
+              <span className="text-sm">NO IMAGE </span>
+            </h1>
+          </div>
+        )}
       </div>
 
       {/* Prev/Next Buttons */}

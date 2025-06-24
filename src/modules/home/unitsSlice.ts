@@ -53,22 +53,6 @@ const unitsSlice = createSlice({
   name: "availableUnits",
   initialState,
   reducers: {
-    resetAvailableUnits: {
-      reducer: (state, action: PayloadAction<StateModel>) => {
-        state.availableUnits = action.payload.availableUnits;
-        state.page = action.payload.page;
-        state.size = action.payload.size;
-        state.totalElements = action.payload.totalElements;
-        state.totalPages = action.payload.totalPages;
-        state.error = null;
-        state.status = "succeeded";
-      },
-
-      prepare: (availableUnits: StateModel) => {
-        return { payload: availableUnits };
-      },
-    },
-
     addNewUnit: {
       reducer: (state, action: PayloadAction<AccommodationModel>) => {
         state.availableUnits = [action.payload, ...state.availableUnits];
@@ -154,13 +138,8 @@ const unitsSlice = createSlice({
   },
 });
 
-export const {
-  resetAvailableUnits,
-  deleteUnitsByLandlord,
-  addNewUnit,
-  updateUnit,
-  deleteUnit,
-} = unitsSlice.actions;
+export const { deleteUnitsByLandlord, addNewUnit, updateUnit, deleteUnit } =
+  unitsSlice.actions;
 
 export const getAvailableUnits = (state: { availableUnits: StateModel }) =>
   state.availableUnits;
