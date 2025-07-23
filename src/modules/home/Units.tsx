@@ -9,7 +9,7 @@ import { AccommodationModel } from "../accommodations/AccommodationModel";
 import UnitDetails from "./UnitDetails";
 import countriesList from "../../global/data/countriesList.json";
 import Select from "react-select";
-import EmptyList from "../../global/EnptyList";
+import EmptyList from "../../global/EmptyList";
 import Preloader from "../../other/Preloader";
 
 interface Props {}

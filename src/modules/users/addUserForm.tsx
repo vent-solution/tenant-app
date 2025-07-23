@@ -55,7 +55,7 @@ const AddUserForm: React.FC<Props> = ({
   ]);
 
   const dispatch = useDispatch<AppDispatch>();
-  const selectedUser = userData;
+  // const userData = userData;
 
   const firstNameRef = useRef<HTMLInputElement>(null);
 
@@ -94,12 +94,12 @@ const AddUserForm: React.FC<Props> = ({
         ...prev,
         linkedTo: { userId: String(linkedToId) },
         addedBy: { userId: String(addedById) },
-        userRole: selectedUser?.userRole,
+        userRole: userData?.userRole,
       }));
     }, 1000);
 
     return () => clearTimeout(timeOut);
-  }, [selectedUser?.userRole]);
+  }, [userData?.userRole]);
 
   // Update form when editing a user
   useEffect(() => {
@@ -115,15 +115,15 @@ const AddUserForm: React.FC<Props> = ({
       linkedToId = String(linkedToUser.userId);
     }
 
-    if (userId && selectedUser) {
+    if (userId && userData) {
       setUser((previousUser) => ({
         ...previousUser,
-        firstName: selectedUser.firstName,
-        lastName: selectedUser.lastName,
-        otherNames: selectedUser.otherNames,
-        gender: selectedUser.gender,
-        userTelephone: selectedUser.userTelephone,
-        userEmail: selectedUser.userEmail,
+        firstName: userData.firstName,
+        lastName: userData.lastName,
+        otherNames: userData.otherNames,
+        gender: userData.gender,
+        userTelephone: userData.userTelephone,
+        userEmail: userData.userEmail,
         addedBy: { userId: addedById },
         linkedTo: { userId: linkedToId },
       }));
@@ -141,10 +141,12 @@ const AddUserForm: React.FC<Props> = ({
         linkedTo: { userId: linkedToId },
       });
     }
-  }, [userId, selectedUser]);
+  }, [userId, userData]);
 
   // handle change of form field values
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleChange = (
+    e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>
+  ) => {
     const { id, value } = e.target;
     setUser({ ...user, [id]: value });
 
@@ -185,9 +187,11 @@ const AddUserForm: React.FC<Props> = ({
 
   // updating user
   const onUpdateUserClicked = async () => {
+    const current_user: UserModel = JSON.parse(
+      localStorage.getItem("dnap-user") as string
+    );
     try {
       const result = await putData(`editUser/${userId}`, user);
-      console.log(result.data);
       if (result.data.status && result.data.status !== "OK") {
         dispatch(
           setAlert({
@@ -205,11 +209,8 @@ const AddUserForm: React.FC<Props> = ({
           })
         );
 
-        if (location.pathname.includes("staff")) {
-          navigate("/staffs");
-        } else {
-          navigate("/users");
-        }
+        navigate(`/users/${current_user.userId}`);
+
         setUserData(result.data);
         setUser(result.data);
         toggleShowForm();
@@ -234,7 +235,7 @@ const AddUserForm: React.FC<Props> = ({
       onSubmit={(e: React.FormEvent<HTMLFormElement>) => e.preventDefault()}
       className="w-full h-[calc(100vh-90px)] overflow-auto bg-gray-100 lg:p-10 mt-16 lg:mt-0"
     >
-      <div className="w-full lg:w-1/3 lg:m-auto shadow-2xl p-5">
+      <div className="w-full lg:w-1/2 lg:m-auto shadow-2xl p-5">
         <h1 className="text-3xl w-full text-center mb-3 flex items-center justify-between shadow-lg p-5">
           <span>Update details </span>
           <span
@@ -352,21 +353,24 @@ const AddUserForm: React.FC<Props> = ({
             Gender
             <span className={"text-red"}>*</span>
           </label>
-          <input
-            type="text"
+
+          <select
             id="gender"
             name="gender"
-            list="genderList"
-            value={user.gender || ""}
-            placeholder="Enter gender"
+            className="w-full"
             onChange={handleChange}
-            className="w-full py-4 px-3 rounded-md outline-none text-gray-900  border-b-2 focus:border-blue-400"
-          />
-          <datalist id="genderList" className="w-full">
-            {GenderValues.map((gender, index) => (
-              <option key={index} value={gender} />
-            ))}
-          </datalist>
+          >
+            {userData?.gender && (
+              <option value={userData.gender}>{userData.gender}</option>
+            )}
+            {GenderValues.filter((gender) => gender !== userData?.gender).map(
+              (gender, index) => (
+                <option key={index} value={gender}>
+                  {gender}
+                </option>
+              )
+            )}
+          </select>
           <small className="text-red-100 hidden">Gender is required</small>
         </div>
 

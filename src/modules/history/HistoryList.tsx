@@ -10,7 +10,7 @@ import Preloader from "../../other/Preloader";
 import { UserModel } from "../users/models/userModel";
 import HistoryDetails from "./HistoryDetails";
 import { AccommodationModel } from "../accommodations/AccommodationModel";
-import EmptyList from "../../global/EnptyList";
+import EmptyList from "../../global/EmptyList";
 
 interface Props {}
 let HistoryList: React.FC<Props> = () => {
@@ -196,12 +196,12 @@ let HistoryList: React.FC<Props> = () => {
         </div>
 
         <div
-          className="lg:px-5 mb-12 overflow-auto pb-5"
+          className="lg:px-5 mb-12 mt-3 overflow-auto pb-5"
           style={{ height: "calc(100vh - 150px)" }}
         >
           {filteredTenantHistory.length > 0 ? (
             <table className="border-2 w-full bg-white mt-2 lg:mt-0 shadow-lg">
-              <thead className="sticky top-0 bg-blue-900 text-base text-white">
+              <thead className="sticky top-0 bg-blue-900 text-white">
                 <tr>
                   <th className="p-2 text-start font-bold">Facility</th>
                   <th className="p-2 text-start font-bold">Unit</th>

@@ -1,6 +1,5 @@
 import React, { useEffect, useState } from "react";
 import { useSelector } from "react-redux";
-import { getAvailableUnitById } from "./unitsSlice";
 import { RxCross1 } from "react-icons/rx";
 import ImageSlider from "../../global/ImageSlide";
 import {
@@ -8,6 +7,7 @@ import {
   ACCOMMODATION_TYPE_DATA,
   BUSINESS_TYPE_DATA,
   FACILITY_RATING,
+  FACILITY_STATUS,
   PAYMENT_PARTERN,
 } from "../../global/PreDefinedData/PreDefinedData";
 import { FormatMoney, FormatMoneyExt } from "../../global/actions/formatMoney";
@@ -21,6 +21,7 @@ import Maps from "../../global/Maps";
 import { FaMap } from "react-icons/fa6";
 import countriesList from "../../global/data/countriesList.json";
 import { useNavigate } from "react-router-dom";
+import { getUnitById } from "./moreFacilityCondominiumsSlice";
 
 interface Props {
   accommodationId: Number | null;
@@ -31,11 +32,11 @@ interface Props {
   isShowUnitDetails: true;
 }
 
-let UnitDetails: React.FC<Props> = ({
+let MoreUnitDetails: React.FC<Props> = ({
   accommodationId,
   setIsShowUnitDetails,
 }) => {
-  const unit = useSelector(getAvailableUnitById(Number(accommodationId)));
+  const unit = useSelector(getUnitById(Number(accommodationId)));
 
   const [currencyNames, setCurrencyNames] = useState<string[]>([]);
   const [convertedPrice, setConvertedPrice] = useState<number>(0);
@@ -118,7 +119,7 @@ let UnitDetails: React.FC<Props> = ({
       </div>
 
       <div className="w-full  py-5">
-        <div className="w-full h-1/2 lg:h-3/4 flex justify-around flex-wrap items-center">
+        <div className="w-full h-1/2 lg:h-3/4 flex flex-wrap items-center">
           <div className="w-full lg:w-2/3 h-full">
             <ImageSlider
               imageUrl={`${process.env.REACT_APP_FACILITY_IMAGES_URL}/${unit?.facility.facilityId}`}
@@ -127,27 +128,28 @@ let UnitDetails: React.FC<Props> = ({
               images={unit?.facility.facilityImages}
             />
           </div>
-
           <div className="w-full lg:w-1/3 p-5">
             <div className="py-5">
               <h1 className="text-gray-600 text-lg font-bold">
-                <span>{unit?.accommodationNumber} </span>
-                {
-                  ACCOMMODATION_TYPE_DATA.find(
-                    (type) => type.value === unit?.accommodationType
-                  )?.label
-                }{" "}
                 For{" "}
                 {
                   BUSINESS_TYPE_DATA.find(
                     (type) => type.value === unit?.facility.businessType
                   )?.label
                 }{" "}
+                |{" "}
+                <span className="">
+                  {
+                    FACILITY_STATUS.find(
+                      (status) => status.value === unit?.facility.facilityStatus
+                    )?.label
+                  }
+                </span>
               </h1>
               {/* <h1 className="text-2xl font-bold w-full">
                 {unit?.facility.facilityName}
               </h1> */}
-              {/* <h1 className="w-full   font-extralight">
+              <h1 className="w-full   font-extralight">
                 <span>{unit?.accommodationNumber} </span>
                 {
                   ACCOMMODATION_TYPE_DATA.find(
@@ -162,7 +164,7 @@ let UnitDetails: React.FC<Props> = ({
                       country.value === unit?.facility.facilityLocation.country
                   )?.label
                 }
-              </h1> */}
+              </h1>
               <h3 className=" text-gray-500 flex flex-wrap">
                 {unit?.accommodationCategory && (
                   <span className="pr-4">
@@ -224,9 +226,9 @@ let UnitDetails: React.FC<Props> = ({
                 </span>
               </h1>
 
-              <h1 className="w-full  font-bold text-gray-600 py-5">
+              <h1 className="w-full font-bold text-gray-600 py-5">
                 <span className="">
-                  Minimum booking amount ({unit?.facility.bookingPercentage}%):{" "}
+                  Booking amount ({unit?.facility.bookingPercentage}%):{" "}
                 </span>
                 <span className="text-gray-800 tracking-wide font-mono">
                   {FormatMoney(
@@ -251,9 +253,10 @@ let UnitDetails: React.FC<Props> = ({
 
                 <button
                   className="text-sm font-bold text-blue-700 bg-gray-100 border py-2 px-5 lg:hover:bg-gray-200 active:scale-95"
-                  onClick={() =>
-                    navigate(`/facility/${unit?.facility.facilityId}`)
-                  }
+                  onClick={() => {
+                    navigate(`/facility/${unit?.facility.facilityId}`);
+                    setIsShowUnitDetails(false);
+                  }}
                 >
                   All units
                 </button>
@@ -261,7 +264,7 @@ let UnitDetails: React.FC<Props> = ({
             </div>
           </div>
         </div>
-        <div className="p-1 lg:p-y lg:pt-0 max-w-4xl mx-auto px-5 lg:px-0">
+        <div className="p-1 lg:p-y lg:pt-0 max-w-4xl mx-auto">
           {/* facility rating  */}
           {unit?.facility.facilityRating && (
             <h3 className="pb-1 text-xl uppercase italic">
@@ -406,49 +409,48 @@ let UnitDetails: React.FC<Props> = ({
                   </p>
                 )}
 
-                {Number(unit?.facility.price) > 0 && (
-                  <div className=" text-black">
-                    <b>Price: </b>
-                    <select
-                      name="currency"
-                      id="currency"
-                      className="uppercase py-0 bg-gray-300 rounded-md"
-                      onChange={(e: React.ChangeEvent<HTMLSelectElement>) =>
-                        setDesiredCurrency(e.target.value)
-                      }
-                    >
-                      <option value={unit?.facility.preferedCurrency}>
-                        {unit?.facility.preferedCurrency}
-                      </option>
-
-                      {currencyNames.map((ex, index) => (
-                        <option key={index} value={ex}>
-                          {ex}
+                {unit?.facility.price &&
+                  unit?.facility.businessType !== businessTypeEnum.rent && (
+                    <div className=" text-black">
+                      <b>Price: </b>
+                      <select
+                        name="currency"
+                        id="currency"
+                        className="uppercase py-0 bg-gray-300 rounded-md"
+                        onChange={(e: React.ChangeEvent<HTMLSelectElement>) =>
+                          setDesiredCurrency(e.target.value)
+                        }
+                      >
+                        <option value={unit?.facility.preferedCurrency}>
+                          {unit?.facility.preferedCurrency}
                         </option>
-                      ))}
-                    </select>{" "}
-                    <i className="font-mono text-lg">
-                      {FormatMoneyExt(
-                        !desiredCurrency
-                          ? Number(unit?.facility.price)
-                          : Number(convertedPrice),
-                        2,
-                        !desiredCurrency
-                          ? String(unit?.facility.preferedCurrency)
-                          : desiredCurrency
-                      )}
-                    </i>
-                  </div>
-                )}
+
+                        {currencyNames.map((ex, index) => (
+                          <option key={index} value={ex}>
+                            {ex}
+                          </option>
+                        ))}
+                      </select>{" "}
+                      <i className="font-mono text-lg">
+                        {FormatMoneyExt(
+                          !desiredCurrency
+                            ? Number(unit?.facility.price)
+                            : Number(convertedPrice),
+                          2,
+                          !desiredCurrency
+                            ? unit?.facility.preferedCurrency
+                            : desiredCurrency
+                        )}
+                      </i>
+                    </div>
+                  )}
               </div>
 
               {/* manager */}
               <div className="location py-4 w-full">
-                {unit?.facility.manager && (
-                  <h2 className="text-xl font-bold text-gray-500 py-1">
-                    Manager
-                  </h2>
-                )}
+                <h2 className="text-xl font-bold text-gray-500 py-1">
+                  Manager
+                </h2>
                 {unit?.facility.manager?.firstName && (
                   <p className=" text-black">
                     <b>Name: </b>
@@ -844,4 +846,6 @@ let UnitDetails: React.FC<Props> = ({
   );
 };
 
-export default UnitDetails;
+MoreUnitDetails = React.memo(MoreUnitDetails);
+
+export default MoreUnitDetails;

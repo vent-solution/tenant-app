@@ -8,6 +8,10 @@ import {
 } from "../../global/PreDefinedData/PreDefinedData";
 import { FormatMoney } from "../../global/actions/formatMoney";
 import countriesList from "../../global/data/countriesList.json";
+import { calculateRentExpiry } from "../../global/actions/calculateRentExpiry";
+import { useSelector } from "react-redux";
+import { getAccommodationRent } from "./AccommodationRentSlice";
+import { calculateFutureDate } from "../receipts/calculateFutureDate";
 
 interface Props {
   accommodation: AccommodationModel;
@@ -35,6 +39,9 @@ const Accommodattion: React.FC<Props> = ({
     : // Use relative time
       "";
 
+  const rentState = useSelector(getAccommodationRent);
+  const { tenantRent } = rentState;
+
   return (
     <tr
       className="cursor-pointer text-sm text-start border-y-2 hover:bg-gray-100"
@@ -44,7 +51,14 @@ const Accommodattion: React.FC<Props> = ({
     >
       {/* <td className="py-5">{accommodationIndex + 1}</td> */}
       <td>
-        {`(FAC-${accommodation.facility.facilityId}) ${accommodation.facility.facilityName}, ${accommodation.facility.facilityLocation.city} ${accommodation.facility.facilityLocation.country}`}
+        {`(FAC-${accommodation.facility.facilityId}) ${
+          accommodation.facility.facilityName
+        }, ${accommodation.facility.facilityLocation.city} ${
+          countriesList.find(
+            (country) =>
+              country.value === accommodation.facility.facilityLocation.country
+          )?.label
+        }`}
       </td>
       <td>{accommodation.accommodationNumber}</td>
       <td>
@@ -70,7 +84,25 @@ const Accommodattion: React.FC<Props> = ({
       </td>
 
       <td>{checkInDetails}</td>
-      <td>{checkInDetails}</td>
+      <td
+        className={`text-${calculateRentExpiry(
+          tenantRent.length > 0 ? tenantRent[0].balance : 0,
+          new Date(String(checkIn)),
+          String(accommodation.paymentPartten),
+          tenantRent.length > 0 ? tenantRent[0].periods : 0
+        )}`}
+      >
+        {new Date(
+          String(
+            calculateFutureDate(
+              tenantRent.length > 0 ? tenantRent[0].balance : 0,
+              new Date(String(checkIn)),
+              String(accommodation.paymentPartten),
+              tenantRent.length > 0 ? tenantRent[0].periods : 0
+            )
+          )
+        ).toDateString()}
+      </td>
     </tr>
   );
 };

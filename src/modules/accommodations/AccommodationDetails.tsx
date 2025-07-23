@@ -211,29 +211,26 @@ const AccommodationDetails: React.FC<Props> = ({
     <div className="w-full h-fit p-0 relative mt-24 lg:mt-0">
       <div className="w-full m-auto h-full shadow-xl">
         <div className="w-full p-2 flex flex-wrap justify-between items-center sticky top-0  shadow-lg z-10 bg-white">
-          {tenantRent.length > 0 ? (
-            <h1
-              className={`text-lg w-full lg:w-fit  pb-3 lg:pb-0 font-bold py-3 lg:py-0 text-${calculateRentExpiry(
-                tenantRent[0].balance,
-                new Date(String(history?.checkIn)),
-                String(history?.accommodation.paymentPartten),
-                tenantRent[0].periods
-              )}`}
-            >
-              {new Date(
-                String(
-                  calculateFutureDate(
-                    tenantRent[0].balance,
-                    new Date(String(history?.checkIn)),
-                    String(history?.accommodation.paymentPartten),
-                    tenantRent[0].periods
-                  )
+          <h1
+            className={`text-lg w-full lg:w-fit  pb-3 lg:pb-0 font-bold py-3 lg:py-0 text-${calculateRentExpiry(
+              tenantRent.length > 0 ? tenantRent[0].balance : 0,
+              new Date(String(history?.checkIn)),
+              String(history?.accommodation.paymentPartten),
+              tenantRent.length > 0 ? tenantRent[0].periods : 0
+            )}`}
+          >
+            {new Date(
+              String(
+                calculateFutureDate(
+                  tenantRent.length > 0 ? tenantRent[0].balance : 0,
+                  new Date(String(history?.checkIn)),
+                  String(history?.accommodation.paymentPartten),
+                  tenantRent.length > 0 ? tenantRent[0].periods : 0
                 )
-              ).toDateString()}
-            </h1>
-          ) : (
-            <h1>.</h1>
-          )}
+              )
+            ).toDateString()}
+          </h1>
+
           <div className="price flex">
             <select
               name="currency"
@@ -279,7 +276,7 @@ const AccommodationDetails: React.FC<Props> = ({
         <div className="w-full h-full flex flex-wrap justify-between items-start pt-10">
           <div className="w-full lg:w-1/3 px-3">
             {/* accommodation section */}
-            <div className="p-4 w-full  shadow-lg">
+            <div className="p-4 w-full">
               <h2 className="text-xl font-bold flex items-center justify-between">
                 Unit details{" "}
                 <span className="text-gray-400">
@@ -363,7 +360,7 @@ const AccommodationDetails: React.FC<Props> = ({
             </div>
 
             {/* facility details */}
-            <div className="p-4 w-full  shadow-lg">
+            <div className="p-4 w-full">
               <h2 className="text-xl font-bold">Facility</h2>
               <div className="p-2 flex justify-start items-center w-full">
                 <p className="text-sm flex flex-wrap">
@@ -377,21 +374,29 @@ const AccommodationDetails: React.FC<Props> = ({
                     <b>Name: </b>
                     <span>{history?.accommodation.facility.facilityName}</span>
                   </span>
-                  <span className="w-full flex items-center py-1">
-                    <FaLocationDot className="text-blue-400" />
+                  <span className="w-full">
+                    <b>City: </b>
                     <span>
-                      {history?.accommodation.facility.facilityLocation.city +
-                        " " +
+                      {history?.accommodation.facility.facilityLocation.city}
+                    </span>
+                  </span>
+                  <span className="w-full">
+                    <b>Country: </b>
+                    <span>
+                      {
                         countriesList.find(
                           (country) =>
                             country.value ===
                             history?.accommodation.facility.facilityLocation
                               .country
-                        )?.label}
+                        )?.label
+                      }
                     </span>
+                  </span>
+                  <span className="w-full flex items-center py-1">
+                    <FaLocationDot className="text-blue-400" />
 
                     <span>
-                      {", "}
                       {
                         history?.accommodation.facility.facilityLocation
                           .primaryAddress
@@ -414,7 +419,7 @@ const AccommodationDetails: React.FC<Props> = ({
             </div>
 
             {/* rent schedule section */}
-            <div className="p-4 w-full  shadow-lg">
+            <div className="p-4 w-full">
               <h2 className="text-xl font-bold">Schedules</h2>
               <div className="p-2 flex justify-start items-center w-full">
                 <p className="text-sm flex flex-wrap">
@@ -478,7 +483,7 @@ const AccommodationDetails: React.FC<Props> = ({
 
           {/* accommodation rent records*/}
           <div className="w-full lg:w-2/3 py-5 lg:pb-1 relative ">
-            <div className="flex justify-around items-center w-full py-5 shadow-lg">
+            <div className="flex justify-around items-center w-full py-5">
               <h2 className=" text-center font-bold text-xl">
                 Payment records
               </h2>

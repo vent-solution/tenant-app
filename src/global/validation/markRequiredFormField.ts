@@ -1,4 +1,4 @@
-const markRequiredFormField = (field: HTMLInputElement) => {
+const markRequiredFormField = (field: HTMLInputElement | HTMLSelectElement) => {
   const parent: HTMLElement | null = field.parentElement;
 
   if (!parent) return;

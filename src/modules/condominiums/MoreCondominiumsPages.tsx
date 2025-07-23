@@ -6,33 +6,31 @@ import SideBar from "../../sidebar/sideBar";
 import { UserModel } from "../users/models/userModel";
 import { PiBuildingsFill } from "react-icons/pi";
 import { FaHistory, FaReceipt } from "react-icons/fa";
-import Units from "./Units";
 import { TbBrandBooking } from "react-icons/tb";
+import MoreUnitsList from "./MoreCondominiumsList";
+import { useDispatch } from "react-redux";
+import { AppDispatch } from "../../app/store";
+import { fetchCondominiumsByFacility } from "./moreFacilityCondominiumsSlice";
+import { useParams } from "react-router-dom";
 
 interface Props {}
 
-const HomePage: React.FC<Props> = () => {
-  const view: boolean = false;
+const MoreUnitsPage: React.FC<Props> = () => {
+  const { facilityId } = useParams();
+
   const [navLinks, setNavLinks] = useState<NavLinkModel[]>([
     {
       icon: <MdDashboard />,
-      name: "Accommodations",
+      name: "Home",
       link: "/home",
       active: false,
-      childLinks: [
-        {
-          // icon: <MdDashboard />,
-          name: "For rent/hospitality",
-          link: "/home",
-          active: true,
-        },
-        {
-          // icon: <MdDashboard />,
-          name: "For sale condominiums",
-          link: "/home/condominiums",
-          active: false,
-        },
-      ],
+    },
+
+    {
+      icon: <MdDashboard />,
+      name: `Facility ${facilityId}`,
+      link: `/facility/${facilityId}`,
+      active: true,
     },
 
     {
@@ -85,6 +83,18 @@ const HomePage: React.FC<Props> = () => {
     },
   ]);
 
+  const dispatch = useDispatch<AppDispatch>();
+
+  useEffect(() => {
+    dispatch(
+      fetchCondominiumsByFacility({
+        facilityId: Number(facilityId),
+        page: 0,
+        size: 100,
+      })
+    );
+  }, [dispatch, facilityId]);
+
   // check if the user is authenticated
   useEffect(() => {
     const current_user: UserModel = JSON.parse(
@@ -103,11 +113,11 @@ const HomePage: React.FC<Props> = () => {
       </div>
       <div className="right lg:w-full w-full h-svh px-0 lg:px-0 py-0 overflow-y-auto  mt-0 lg:mt-0">
         <div className="flex w-full h-svh lg:h-dvh mt-20 lg:mt-0 z-0 bg-gray-100">
-          <Units />
+          <MoreUnitsList />
         </div>
       </div>
     </div>
   );
 };
 
-export default HomePage;
+export default MoreUnitsPage;

@@ -2,6 +2,7 @@ import React from "react";
 import { HistoryModel } from "./HistoryModel";
 import { format, formatDistanceToNow, parseISO } from "date-fns";
 import { ACCOMMODATION_TYPE_DATA } from "../../global/PreDefinedData/PreDefinedData";
+import countriesList from "../../global/data/countriesList.json";
 
 interface Props {
   history: HistoryModel;
@@ -47,7 +48,11 @@ const HistoryRow: React.FC<Props> = ({ history, onClick }) => {
           ", " +
           history.accommodation.facility.facilityLocation.city +
           " " +
-          history.accommodation.facility.facilityLocation.country}
+          countriesList.find(
+            (country) =>
+              country.value ===
+              history.accommodation.facility.facilityLocation.country
+          )?.label}
       </td>
       <td className="px-2 py-5">{history.accommodation.accommodationNumber}</td>
       <td className="px-2">{history.accommodation.floor}</td>

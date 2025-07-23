@@ -11,7 +11,7 @@ import Preloader from "../../other/Preloader";
 import { fetchTenantBookings, getTenantBookings } from "./bookingsSlice";
 import { UserModel } from "../users/models/userModel";
 import BookingRow from "./BookingRow";
-import EmptyList from "../../global/EnptyList";
+import EmptyList from "../../global/EmptyList";
 interface Props {}
 
 let BookingsList: React.FC<Props> = () => {

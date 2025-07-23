@@ -13,7 +13,7 @@ import PaginationButtons from "../../global/PaginationButtons";
 import { HistoryModel } from "../facilities/history/HistoryModel";
 import { UserModel } from "../users/models/userModel";
 import Preloader from "../../other/Preloader";
-import EmptyList from "../../global/EnptyList";
+import EmptyList from "../../global/EmptyList";
 
 interface Props {}
 
@@ -201,7 +201,7 @@ let Accommodations: React.FC<Props> = () => {
           >
             {filteredTenantAccommodations.length > 0 ? (
               <table className="border-2 w-full bg-white shadow-lg">
-                <thead className="sticky top-0 bg-blue-900 text-base text-white">
+                <thead className="sticky top-0 bg-blue-900 text-white">
                   <tr>
                     {/* <th className="p-2 text-start font-bold">#</th> */}
                     <th className="p-2 text-start font-bold">Facility</th>

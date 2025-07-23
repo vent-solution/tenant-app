@@ -20,6 +20,7 @@ import receiptsReducer from "../modules/receipts/receiptsSlice";
 import accommodationRentReducer from "../modules/accommodations/AccommodationRentSlice";
 import tenantAccommodationsReducer from "../modules/accommodations/tenantAccommodationsSlice";
 import facilityAccommodationsReducer from "../modules/home/moreFacilityUnitsSlice";
+import availableCondominiumsReducer from "../modules/condominiums/condominiumsSlice";
 
 export const store = configureStore({
   reducer: {
@@ -44,6 +45,7 @@ export const store = configureStore({
     receipts: receiptsReducer,
     tenantAccommodations: tenantAccommodationsReducer,
     facilityAccommodations: facilityAccommodationsReducer,
+    availableCondominiums: availableCondominiumsReducer,
   },
 });
 

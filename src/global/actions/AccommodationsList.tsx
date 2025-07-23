@@ -5,7 +5,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { AppDispatch } from "../../app/store";
 import PaginationButtons from "../../global/PaginationButtons";
 import Preloader from "../../other/Preloader";
-import EmptyList from "../../global/EnptyList";
+import EmptyList from "../EmptyList";
 import Accommodation from "../../modules/accommodations/Accommodation";
 import AccommodationDetails from "../../modules/accommodations/AccommodationDetails";
 import {

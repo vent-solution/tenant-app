@@ -100,7 +100,7 @@ tr:hover td.actions {
 }
 
 .alert-overlay {
-  background-color: rgba(23, 37, 84, 0.2);
+  background-color: rgba(23, 37, 84, 0.5);
 }
 
 .filter-form-overlay {

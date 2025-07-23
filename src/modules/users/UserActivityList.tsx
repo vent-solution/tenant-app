@@ -10,7 +10,7 @@ import Log from "../logs/Log";
 import { LogModel } from "../logs/LogModel";
 import { fetchLogs, getLogs } from "../logs/LogsSlice";
 import { UserModel } from "./models/userModel";
-import EmptyList from "../../global/EnptyList";
+import EmptyList from "../../global/EmptyList";
 
 interface Props {
   userId: number;

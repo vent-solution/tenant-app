@@ -19,7 +19,6 @@ import { fetchData } from "../../global/api";
 
 import { RentModel } from "../rent/RentModel";
 import RentForm from "../rent/RentForm";
-import { AccommodationModel } from "../accommodations/AccommodationModel";
 import AccommodationRentRow from "../accommodations/AccommodationRentRow";
 import {
   fetchAccommodationRent,
@@ -196,8 +195,8 @@ let HistoryDetails: React.FC<Props> = ({
 
   return (
     <div className="w-full h-fit p-0 relative mt-24 lg:mt-0">
-      <div className="w-full lg:w-full m-auto h-full shadow-xl">
-        <div className="w-full p-2 flex justify-between items-center sticky top-0  shadow-lg z-10 bg-white">
+      <div className="w-full lg:w-full m-auto h-full ">
+        <div className="w-full p-2 flex justify-between items-center sticky top-0 z-10 bg-white shadow-lg">
           <h1 className="text-lg font-bold">
             {history?.accommodation.accommodationNumber}
           </h1>
@@ -246,7 +245,7 @@ let HistoryDetails: React.FC<Props> = ({
         <div className="w-full h-full flex flex-wrap justify-between items-start pt-10">
           <div className="w-full lg:w-1/3 px-3">
             {/* facility details */}
-            <div className="p-4 w-full  shadow-lg">
+            <div className="p-4 w-full  ">
               <h2 className="text-xl font-bold">Facility</h2>
               <div className="p-2 flex justify-start items-center w-full">
                 <p className="text-sm flex flex-wrap">
@@ -294,7 +293,7 @@ let HistoryDetails: React.FC<Props> = ({
             </div>
 
             {/* accommodation section */}
-            <div className="p-4 w-full  shadow-lg">
+            <div className="p-4 w-full  ">
               <h2 className="text-xl font-bold">Unit details</h2>
               <div className="p-2 flex justify-start items-center w-full">
                 <p className="text-sm flex flex-wrap">
@@ -373,7 +372,7 @@ let HistoryDetails: React.FC<Props> = ({
             </div>
 
             {/* time lines */}
-            <div className="p-4 w-full  shadow-lg">
+            <div className="p-4 w-full  ">
               <h2 className="text-xl font-bold">Timelines</h2>
               <div className="p-2 flex justify-start items-center w-full">
                 <p className="text-sm flex flex-wrap">
@@ -396,7 +395,7 @@ let HistoryDetails: React.FC<Props> = ({
 
           {/* accommodation rent records*/}
           <div className="w-full lg:w-2/3 pb-5 lg:pb-5 relative ">
-            <div className="flex justify-around items-center w-full py-5 shadow-lg">
+            <div className="flex justify-around items-center w-full py-5 ">
               <h2 className=" text-center font-bold text-xl">
                 Payment records
               </h2>

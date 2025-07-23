@@ -6,9 +6,9 @@ import { LogModel } from "./LogModel";
 import { AppDispatch } from "../../app/store";
 import PaginationButtons from "../../global/PaginationButtons";
 import Log from "./Log";
-import { getLogs } from "./LogsSlice";
+import { fetchLogs, getLogs } from "./LogsSlice";
 import { UserModel } from "../users/models/userModel";
-import EmptyList from "../../global/EnptyList";
+import EmptyList from "../../global/EmptyList";
 
 interface Props {}
 
@@ -162,10 +162,3 @@ let LogsList: React.FC<Props> = () => {
 
 LogsList = React.memo(LogsList);
 export default LogsList;
-function fetchLogs(arg0: {
-  userId: number[];
-  page: number;
-  size: number;
-}): any {
-  throw new Error("Function not implemented.");
-}

@@ -58,7 +58,14 @@ let FacilityDetails: React.FC<Props> = ({
 
   return (
     <div className="w-full overflow-auto bg-white">
-      <div className="w-full p-5 flex justify-end items-center bg-white shadow-lg sticky top-0 z-20">
+      <div className="w-full p-5 flex justify-between items-center bg-white shadow-lg sticky top-0 z-20">
+        <h1 className="text-xl font-bold">{`${facility?.facilityName}, ${
+          facility?.facilityLocation.city
+        } ${
+          countriesList.find(
+            (country) => country.value === facility?.facilityLocation.country
+          )?.label
+        }`}</h1>
         <h1
           className="text-lg p-2 lg:hover:bg-red-500 lg:hover:text-white font-bold cursor-pointer"
           onClick={() => setIsShowFacilityDetails(false)}
@@ -67,7 +74,7 @@ let FacilityDetails: React.FC<Props> = ({
         </h1>
       </div>
 
-      <div className="w-full lg:w-5/6  m-auto p-5">
+      <div className="w-full lg:w-5/6  m-auto p-2 lg:p-5">
         <div className="w-full h-1/2 flex flex-wrap items-center">
           <div className="w-full h-full">
             <ImageSlider
@@ -77,53 +84,6 @@ let FacilityDetails: React.FC<Props> = ({
               images={facility?.facilityImages}
             />
           </div>
-          {/* <div className="w-full lg:w-1/3 p-5">
-            <div className="py-5">
-              <h1 className="text-gray-600 text-lg">
-                For{" "}
-                {
-                  BUSINESS_TYPE_DATA.find(
-                    (type) => type.value === facility?.businessType
-                  )?.label
-                }{" "}
-                |{" "}
-                <span className="text-sm">
-                  {
-                    FACILITY_STATUS.find(
-                      (status) => status.value === facility?.facilityStatus
-                    )?.label
-                  }
-                </span>
-              </h1>
-              <h1 className="text-2xl font-bold w-full">
-                {facility?.facilityName}
-              </h1>
-              <h1 className="w-full text-sm  font-extralight">
-                {
-                  FACILITY_CATEGORY_DATA.find(
-                    (type) => type.value === facility?.facilityCategory
-                  )?.label
-                }{" "}
-                {<span>in </span>}
-                {facility?.facilityLocation.city}{" "}
-                {facility?.facilityLocation.country}
-              </h1>
-
-              <h1 className="w-full text-lg font-bold text-green-600">
-                <span className="font-mono">
-                  {FormatMoney(
-                    Number(facility?.price),
-                    2,
-                    String(facility?.preferedCurrency)
-                  )}
-                </span>
-              </h1>
-
-              <p className="w-full text-sm py-2 text-justify truncate">
-                {facility?.description}
-              </p>
-            </div>
-          </div> */}
         </div>
         <div className="p-1 lg:p-y lg:pt-0 max-w-4xl mx-auto">
           {/* facility rating  */}
@@ -141,7 +101,7 @@ let FacilityDetails: React.FC<Props> = ({
           )}
 
           {/* facility name  */}
-          <h1 className="w-full pt-5 text-5xl font-semi-bold">
+          <h1 className="w-full pt-5 text-3xl lg:text-5xl font-semi-bold">
             <span>{facility?.facilityName}</span>
           </h1>
           <h3 className="pb-3 text-xl uppercase italic">
@@ -200,6 +160,13 @@ let FacilityDetails: React.FC<Props> = ({
                   <p className="text-sm text-black">
                     <b>City: </b>
                     <i>{facility?.facilityLocation.city}</i>
+                  </p>
+                )}
+
+                {facility?.facilityLocation.primaryAddress && (
+                  <p className="text-sm text-black">
+                    <b>Primary address: </b>
+                    <i>{facility?.facilityLocation.primaryAddress}</i>
                   </p>
                 )}
               </div>
@@ -274,9 +241,11 @@ let FacilityDetails: React.FC<Props> = ({
 
               {/* manager */}
               <div className="location py-4 w-full">
-                <h2 className="text-xl font-bold text-gray-500 py-1">
-                  Manager
-                </h2>
+                {facility?.manager && (
+                  <h2 className="text-xl font-bold text-gray-500 py-1">
+                    Manager
+                  </h2>
+                )}
                 {facility?.manager?.firstName && (
                   <p className="text-sm text-black">
                     <b>Name: </b>
@@ -313,7 +282,7 @@ let FacilityDetails: React.FC<Props> = ({
                 <p className="flex justify-between text-center text-sm bg-black px-5 border-b-2 border-gray-300 text-blue-200 sticky top-0">
                   <b className="w-fit"></b>
                   <span className="w-1/2 flex justify-between text-center text-sm text-cyan-100 py-5">
-                    <span className="text-center w-1/3">Availble</span>
+                    {/* <span className="text-center w-1/3">Availble</span> */}
                     <span className="text-center w-1/3">Free</span>
                     <span className="text-center w-1/3">Paid</span>
                   </span>

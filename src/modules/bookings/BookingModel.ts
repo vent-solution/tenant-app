@@ -17,12 +17,12 @@ export interface BookingModel {
 }
 
 export interface BookingCreationModel {
-  amount: number;
-  currency: string;
-  paymentType: string;
-  checkIn?: string;
-  checkOut?: string;
-  transactionDate: string;
+  amount: number | null;
+  currency: string | null;
+  paymentType: string | null;
+  checkIn?: string | null;
+  checkOut?: string | null;
+  transactionDate: string | null;
   transactionStatus: string;
-  accommodation: { accommodationId: number };
+  accommodation: { accommodationId: number | null };
 }

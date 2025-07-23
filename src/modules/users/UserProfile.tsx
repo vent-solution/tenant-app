@@ -79,14 +79,14 @@ const UserProfileDetails: React.FC<Props> = ({ userId }) => {
           >
             Update
           </button>
-          {user?.userRole !== UserRoleEnum.landlord && (
+          {/* {user?.userRole !== UserRoleEnum.landlord && (
             <button
               className="ml-3 py-1 px-5 bg-red-700 lg:hover:bg-red-500 text-white"
               // onClick={toggleShowUserForm}
             >
               Delete
             </button>
-          )}
+          )} */}
         </div>
       </div>
     </div>

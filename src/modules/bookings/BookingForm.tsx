@@ -4,6 +4,7 @@ import { RxCross1 } from "react-icons/rx";
 import {
   ACCOMMODATION_CATEGORY,
   ACCOMMODATION_TYPE_DATA,
+  PAYMENT_PARTERN,
   PAYMENT_TYPE_DATA,
 } from "../../global/PreDefinedData/PreDefinedData";
 import { FormatMoney } from "../../global/actions/formatMoney";
@@ -20,6 +21,8 @@ import { setUserAction } from "../../global/actions/actionSlice";
 import { useNavigate } from "react-router-dom";
 import { BookingCreationModel } from "./BookingModel";
 import { AccommodationModel } from "../accommodations/AccommodationModel";
+import { businessTypeEnum } from "../../global/enums/businessTypeEnum";
+import checkRequiredFormFields from "../../global/validation/checkRequiredFormFields";
 
 interface Props {
   accommodation?: AccommodationModel;
@@ -32,10 +35,11 @@ let BookingForm: React.FC<Props> = ({
 }) => {
   const [bookingData, setBookingData] = useState<BookingCreationModel>({
     amount: 0,
-    currency: "",
+    currency: null,
     paymentType: PaymentTypeEnum.others,
-    checkIn: "",
-    transactionDate: "",
+    checkIn: null,
+    checkOut: null,
+    transactionDate: null,
     transactionStatus: TransactionStatusEnum.pending,
     accommodation: { accommodationId: Number(accommodation?.accommodationId) },
   });
@@ -79,21 +83,43 @@ let BookingForm: React.FC<Props> = ({
       localStorage.getItem("dnap-user") as string
     );
 
-    // check if checkIn date is provided
-    if (String(bookingData.checkIn).trim().length < 1) {
-      dispatch(setConfirm({ status: false, message: "" }));
-      dispatch(
-        setAlert({
-          type: AlertTypeEnum.danger,
-          status: true,
-          message: "Please choose expected checkIn date.",
-        })
-      );
+    // check if checkIn or checkOut date is provided
+    if (accommodation?.facility.businessType === businessTypeEnum.hospitality) {
+      if (!bookingData.checkIn || !bookingData.checkOut) {
+        checkRequiredFormFields([
+          document.getElementById("checkIn") as HTMLInputElement,
+          document.getElementById("checkOut") as HTMLInputElement,
+        ]);
+        dispatch(setConfirm({ status: false, message: "" }));
+        dispatch(
+          setAlert({
+            type: AlertTypeEnum.danger,
+            status: true,
+            message: "Please fill in all the required fields",
+          })
+        );
 
-      return;
+        return;
+      }
+    } else {
+      if (!bookingData.checkIn) {
+        checkRequiredFormFields([
+          document.getElementById("checkIn") as HTMLInputElement,
+        ]);
+        dispatch(setConfirm({ status: false, message: "" }));
+        dispatch(
+          setAlert({
+            type: AlertTypeEnum.danger,
+            status: true,
+            message: "Please fill in all the required fields",
+          })
+        );
+
+        return;
+      }
     }
 
-    // check if payment method is selected
+    // check if any payment method is selected
     if (
       String(bookingData.paymentType) === PaymentTypeEnum.others &&
       bookingAmount > 0
@@ -186,8 +212,8 @@ let BookingForm: React.FC<Props> = ({
 
   return (
     <div className="w-full h-100vh bg-gray-100 overflow-auto">
-      <div className="p-5 bg-white flex justify-end w-full shadow-lg sticky top-0">
-        <h1 className="text-2xl w-5/6 text-center text-gray-700">
+      <div className="p-5 bg-white flex justify-between w-full shadow-lg sticky top-0">
+        <h1 className="text-2xl  text-gray-700">
           Book{" "}
           {
             ACCOMMODATION_TYPE_DATA.find(
@@ -204,227 +230,268 @@ let BookingForm: React.FC<Props> = ({
         </h1>
       </div>
 
-      <div className="py-10 flex flex-wrap justify-center w-full">
-        <h1 className="text-3xl font-bold w-full text-center">
-          {accommodation?.facility.facilityName},{" "}
-          {accommodation?.facility.facilityLocation.city}{" "}
-          {accommodation?.facility.facilityLocation.country}
-        </h1>
-        <h2 className="text-xl text-gray-700 w-full text-center">
-          {
-            ACCOMMODATION_TYPE_DATA.find(
-              (type) => type.value === accommodation?.accommodationType
-            )?.label
-          }{" "}
-          {accommodation?.accommodationCategory &&
-            "(" +
-              ACCOMMODATION_CATEGORY.find(
-                (category) =>
-                  category.value === accommodation?.accommodationCategory
-              )?.label +
-              ")"}
-          {Number(accommodation?.capacity) > 1 &&
-            "(" + accommodation?.capacity + " Seat(s))"}
-        </h2>
+      <div className="w-full p-3 lg:p-10 flex flex-wrap justify-center">
+        <div className="w-full lg:w-1/2 p-5 border shadow-lg">
+          <h1 className="text-3xl font-bold w-full text-center">
+            {accommodation?.facility.facilityName},{" "}
+            {accommodation?.facility.facilityLocation.city}{" "}
+            {accommodation?.facility.facilityLocation.country}
+          </h1>
+          <h2 className="text-xl text-gray-700 w-full text-center">
+            {
+              ACCOMMODATION_TYPE_DATA.find(
+                (type) => type.value === accommodation?.accommodationType
+              )?.label
+            }{" "}
+            {accommodation?.accommodationCategory &&
+              "(" +
+                ACCOMMODATION_CATEGORY.find(
+                  (category) =>
+                    category.value === accommodation?.accommodationCategory
+                )?.label +
+                ")"}
+            {Number(accommodation?.capacity) > 1 &&
+              "(" + accommodation?.capacity + " Seat(s))"}
+          </h2>
 
-        <h2 className="text-xl text-green-600 w-full text-center">
-          {FormatMoney(
-            Number(accommodation?.price),
-            2,
-            String(accommodation?.facility.preferedCurrency)
-          )}
-        </h2>
-
-        <h2 className="text-xl text-gray-600 w-full text-center py-5">
-          Booking amount ({accommodation?.facility.bookingPercentage}%):{" "}
-          <span className="text-gray-900 font-mono">
+          <h2 className="text-xl text-green-600 w-full text-center">
             {FormatMoney(
-              (Number(accommodation?.price) *
-                Number(accommodation?.facility.bookingPercentage)) /
-                100,
+              Number(accommodation?.price),
               2,
               String(accommodation?.facility.preferedCurrency)
             )}
-          </span>
-        </h2>
 
-        <form
-          className="w-full lg:w-1/2 m-auto p-5 border"
-          onSubmit={(e: FormEvent<HTMLFormElement>) => e.preventDefault()}
-        >
-          <div className="form-group w-full py-5">
-            <label htmlFor="checkIn" className="w-full">
-              Expected checkIn <span className="text-red-600">*</span>
-            </label>
-            <input
-              type="date"
-              id="checkIn"
-              name="CheckIn"
-              className="w-full border outline-none py-2"
-              value={bookingData.checkIn}
-              onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
-                setBookingData((prev) => ({ ...prev, checkIn: e.target.value }))
+            <span className="text-gray-700 text-sm ml-3">
+              {
+                PAYMENT_PARTERN.find(
+                  (partan) => partan.value === accommodation?.paymentPartten
+                )?.label
               }
-            />
-            <small className="w-full"></small>
-          </div>
+            </span>
+          </h2>
 
-          {bookingAmount > 0 && (
-            <>
-              <h3 className="pt-5 text-lg font-bold w-full underline">
-                Select payment method
-              </h3>
+          <h2 className="text-xl text-gray-600 w-full text-center py-5">
+            Booking amount ({accommodation?.facility.bookingPercentage}%):{" "}
+            <span className="text-gray-900 font-mono">
+              {FormatMoney(
+                (Number(accommodation?.price) *
+                  Number(accommodation?.facility.bookingPercentage)) /
+                  100,
+                2,
+                String(accommodation?.facility.preferedCurrency)
+              )}
+            </span>
+          </h2>
 
-              <div className="flex flex-wrap justify-between items-center py-5">
-                {/* MTN mobile money */}
-                <div
-                  className="form-group lg:w-1/2 p-2 flex items-center hover:bg-white hover:border rounded-lg cursor-pointer "
-                  onClick={() =>
+          <form
+            className="w-full m-auto p-5"
+            onSubmit={(e: FormEvent<HTMLFormElement>) => e.preventDefault()}
+          >
+            <div className="form-group w-full py-5">
+              <label htmlFor="checkIn" className="w-full font-bold">
+                Expected check in <span className="text-red-600">*</span>
+              </label>
+              <input
+                type="date"
+                id="checkIn"
+                name="checkIn"
+                className="w-full outline-none border-2 border-gray-300 rounded-lg focus:border-blue-200"
+                value={bookingData.checkIn || ""}
+                onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
+                  setBookingData((prev) => ({
+                    ...prev,
+                    checkIn: e.target.value,
+                  }))
+                }
+              />
+              <small className="w-full text-red-500">
+                Expected check in date is required!
+              </small>
+            </div>
+
+            {accommodation?.facility.businessType ===
+              businessTypeEnum.hospitality && (
+              <div className="form-group w-full py-5">
+                <label htmlFor="checkOut" className="w-full font-bold">
+                  Expected check out <span className="text-red-600">*</span>
+                </label>
+                <input
+                  type="date"
+                  id="checkOut"
+                  name="CheckOut"
+                  className="w-full outline-none border-2 border-gray-300 rounded-lg focus:border-blue-200"
+                  value={bookingData.checkIn || ""}
+                  onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
                     setBookingData((prev) => ({
                       ...prev,
-                      paymentType:
-                        bookingData.paymentType !== PaymentTypeEnum.onlineMomo
-                          ? PaymentTypeEnum.onlineMomo
-                          : "",
+                      checkOut: e.target.value,
                     }))
                   }
-                >
-                  <input
-                    type="radio"
-                    className=" w-5 h-5"
-                    checked={
-                      bookingData.paymentType === PaymentTypeEnum.onlineMomo
-                    }
-                  />
-                  <img
-                    src={`${process.env.REACT_APP_PAYMENT_METHOD_IMAGES}/mtn-momo.png`}
-                    alt=""
-                    height={50}
-                    width={100}
-                  />
-                </div>
-
-                {/* Airtel money */}
-                <div
-                  className="form-group lg:w-1/2  p-2 flex items-center hover:bg-white hover:border rounded-lg cursor-pointer"
-                  onClick={() =>
-                    setBookingData((prev) => ({
-                      ...prev,
-                      paymentType:
-                        bookingData.paymentType !==
-                        PaymentTypeEnum.onlineAirtelMoney
-                          ? PaymentTypeEnum.onlineAirtelMoney
-                          : "",
-                    }))
-                  }
-                >
-                  <input
-                    type="radio"
-                    className=" w-5 h-5"
-                    checked={
-                      bookingData.paymentType ===
-                      PaymentTypeEnum.onlineAirtelMoney
-                    }
-                  />
-                  <img
-                    src={`${process.env.REACT_APP_PAYMENT_METHOD_IMAGES}/airtel-money.png`}
-                    alt=""
-                    height={50}
-                    width={100}
-                  />
-                </div>
-
-                {/* Visa payment */}
-                <div
-                  className="form-group lg:w-1/2  p-2 flex items-center hover:bg-white hover:border rounded-lg cursor-pointer"
-                  onClick={() =>
-                    setBookingData((prev) => ({
-                      ...prev,
-                      paymentType:
-                        bookingData.paymentType !== PaymentTypeEnum.onlineBank
-                          ? PaymentTypeEnum.onlineBank
-                          : "",
-                    }))
-                  }
-                >
-                  <input
-                    type="radio"
-                    className=" w-5 h-5"
-                    checked={
-                      bookingData.paymentType === PaymentTypeEnum.onlineBank
-                    }
-                  />
-                  <img
-                    src={`${process.env.REACT_APP_PAYMENT_METHOD_IMAGES}/visa-payment.png`}
-                    alt=""
-                    height={50}
-                    width={100}
-                  />
-                </div>
-
-                {/* paypal payment  */}
-                <div
-                  className="form-group lg:w-1/2  p-2 flex items-center hover:bg-white hover:border rounded-lg cursor-pointer"
-                  onClick={() =>
-                    setBookingData((prev) => ({
-                      ...prev,
-                      paymentType:
-                        bookingData.paymentType !== PaymentTypeEnum.onlinePaypal
-                          ? PaymentTypeEnum.onlinePaypal
-                          : "",
-                    }))
-                  }
-                >
-                  <input
-                    type="radio"
-                    className=" w-5 h-5"
-                    checked={
-                      bookingData.paymentType === PaymentTypeEnum.onlinePaypal
-                    }
-                  />
-                  <img
-                    src={`${process.env.REACT_APP_PAYMENT_METHOD_IMAGES}/paypal.jpeg`}
-                    alt=""
-                    height={50}
-                    width={100}
-                  />
-                </div>
+                />
+                <small className="w-full text-red-500">
+                  Expected check out date is required!
+                </small>
               </div>
-            </>
-          )}
+            )}
 
-          <div className="form-group w-full py-10 flex items-center justify-center">
-            <button
-              type="submit"
-              className="w-full px-10 py-2 text-2xl bg-blue-500 lg:hover:bg-blue-300 text-white"
-              onClick={() => {
-                dispatch(
-                  setConfirm({
-                    status: true,
-                    message: `Are you sure you want to book a ${
-                      ACCOMMODATION_TYPE_DATA.find(
-                        (type) =>
-                          type.value === accommodation?.accommodationType
-                      )?.label
-                    } at ${accommodation?.facility.facilityName}, ${
-                      accommodation?.facility.facilityLocation.city
-                    } ${
-                      accommodation?.facility.facilityLocation.country
-                    } using ${
-                      PAYMENT_TYPE_DATA.find(
-                        (type) => type.value === bookingData.paymentType
-                      )?.label
-                    } ?`,
-                  })
-                );
+            {bookingAmount > 0 && (
+              <>
+                <h3 className="pt-5 text-lg font-bold w-full underline">
+                  Select payment method
+                </h3>
 
-                dispatch(setUserAction({ userAction: submitBooking }));
-              }}
-            >
-              Submit booking
-            </button>
-          </div>
-        </form>
+                <div className="flex flex-wrap justify-between items-center py-5">
+                  {/* MTN mobile money */}
+                  <div
+                    className="form-group lg:w-1/2 p-2 flex items-center hover:bg-white rounded-lg cursor-pointer "
+                    onClick={() =>
+                      setBookingData((prev) => ({
+                        ...prev,
+                        paymentType:
+                          bookingData.paymentType !== PaymentTypeEnum.onlineMomo
+                            ? PaymentTypeEnum.onlineMomo
+                            : "",
+                      }))
+                    }
+                  >
+                    <input
+                      type="radio"
+                      className=" w-5 h-5"
+                      checked={
+                        bookingData.paymentType === PaymentTypeEnum.onlineMomo
+                      }
+                    />
+                    <img
+                      src={`${process.env.REACT_APP_PAYMENT_METHOD_IMAGES}/mtn-momo.png`}
+                      alt=""
+                      height={50}
+                      width={100}
+                    />
+                  </div>
+
+                  {/* Airtel money */}
+                  <div
+                    className="form-group lg:w-1/2  p-2 flex items-center hover:bg-white hover:border rounded-lg cursor-pointer"
+                    onClick={() =>
+                      setBookingData((prev) => ({
+                        ...prev,
+                        paymentType:
+                          bookingData.paymentType !==
+                          PaymentTypeEnum.onlineAirtelMoney
+                            ? PaymentTypeEnum.onlineAirtelMoney
+                            : "",
+                      }))
+                    }
+                  >
+                    <input
+                      type="radio"
+                      className=" w-5 h-5"
+                      checked={
+                        bookingData.paymentType ===
+                        PaymentTypeEnum.onlineAirtelMoney
+                      }
+                    />
+                    <img
+                      src={`${process.env.REACT_APP_PAYMENT_METHOD_IMAGES}/airtel-money.png`}
+                      alt=""
+                      height={50}
+                      width={100}
+                    />
+                  </div>
+
+                  {/* Visa payment */}
+                  <div
+                    className="form-group lg:w-1/2  p-2 flex items-center hover:bg-white hover:border rounded-lg cursor-pointer"
+                    onClick={() =>
+                      setBookingData((prev) => ({
+                        ...prev,
+                        paymentType:
+                          bookingData.paymentType !== PaymentTypeEnum.onlineBank
+                            ? PaymentTypeEnum.onlineBank
+                            : "",
+                      }))
+                    }
+                  >
+                    <input
+                      type="radio"
+                      className=" w-5 h-5"
+                      checked={
+                        bookingData.paymentType === PaymentTypeEnum.onlineBank
+                      }
+                    />
+                    <img
+                      src={`${process.env.REACT_APP_PAYMENT_METHOD_IMAGES}/visa-payment.png`}
+                      alt=""
+                      height={50}
+                      width={100}
+                    />
+                  </div>
+
+                  {/* paypal payment  */}
+                  <div
+                    className="form-group lg:w-1/2  p-2 flex items-center hover:bg-white hover:border rounded-lg cursor-pointer"
+                    onClick={() =>
+                      setBookingData((prev) => ({
+                        ...prev,
+                        paymentType:
+                          bookingData.paymentType !==
+                          PaymentTypeEnum.onlinePaypal
+                            ? PaymentTypeEnum.onlinePaypal
+                            : "",
+                      }))
+                    }
+                  >
+                    <input
+                      type="radio"
+                      className=" w-5 h-5"
+                      checked={
+                        bookingData.paymentType === PaymentTypeEnum.onlinePaypal
+                      }
+                    />
+                    <img
+                      src={`${process.env.REACT_APP_PAYMENT_METHOD_IMAGES}/paypal.jpeg`}
+                      alt=""
+                      height={50}
+                      width={100}
+                    />
+                  </div>
+                </div>
+              </>
+            )}
+
+            <div className="form-group w-full py-10 flex items-center justify-center">
+              <button
+                type="submit"
+                className="w-full px-10 py-2 text-2xl bg-blue-500 lg:hover:bg-blue-300 text-white"
+                onClick={() => {
+                  dispatch(
+                    setConfirm({
+                      status: true,
+                      message: `Are you sure you want to book a ${
+                        ACCOMMODATION_TYPE_DATA.find(
+                          (type) =>
+                            type.value === accommodation?.accommodationType
+                        )?.label
+                      } at ${accommodation?.facility.facilityName}, ${
+                        accommodation?.facility.facilityLocation.city
+                      } ${
+                        accommodation?.facility.facilityLocation.country
+                      } using ${
+                        PAYMENT_TYPE_DATA.find(
+                          (type) => type.value === bookingData.paymentType
+                        )?.label
+                      } ?`,
+                    })
+                  );
+
+                  dispatch(setUserAction({ userAction: submitBooking }));
+                }}
+              >
+                Submit booking
+              </button>
+            </div>
+          </form>
+        </div>
       </div>
     </div>
   );

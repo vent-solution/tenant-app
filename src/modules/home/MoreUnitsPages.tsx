@@ -21,16 +21,23 @@ const MoreUnitsPage: React.FC<Props> = () => {
   const [navLinks, setNavLinks] = useState<NavLinkModel[]>([
     {
       icon: <MdDashboard />,
-      name: "Home",
+      name: "Accommodations",
       link: "/home",
       active: false,
-    },
-
-    {
-      icon: <MdDashboard />,
-      name: `Facility ${facilityId}`,
-      link: `/facility/${facilityId}`,
-      active: true,
+      childLinks: [
+        {
+          // icon: <MdDashboard />,
+          name: "For rent/hospitality",
+          link: "/home",
+          active: true,
+        },
+        {
+          // icon: <MdDashboard />,
+          name: "For sale condominiums",
+          link: "/home/condominiums",
+          active: false,
+        },
+      ],
     },
 
     {

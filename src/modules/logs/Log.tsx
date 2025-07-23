@@ -39,7 +39,7 @@ let Log: React.FC<Props> = ({ log, logIndex }) => {
       <td className="px-2">{log.activity}</td>
       <td className="px-2 w-96 pt-5">{log.description}</td>
       <td
-        className={`px-2 text-lg ${
+        className={`px-2 ${
           log.status === "failed" ? "text-red-500" : "text-green-600"
         }`}
       >

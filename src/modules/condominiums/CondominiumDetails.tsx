@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { useSelector } from "react-redux";
-import { getAvailableUnitById } from "./unitsSlice";
+import { getAvailableCondominiumById } from "./condominiumsSlice";
 import { RxCross1 } from "react-icons/rx";
 import ImageSlider from "../../global/ImageSlide";
 import {
@@ -35,7 +35,9 @@ let UnitDetails: React.FC<Props> = ({
   accommodationId,
   setIsShowUnitDetails,
 }) => {
-  const unit = useSelector(getAvailableUnitById(Number(accommodationId)));
+  const unit = useSelector(
+    getAvailableCondominiumById(Number(accommodationId))
+  );
 
   const [currencyNames, setCurrencyNames] = useState<string[]>([]);
   const [convertedPrice, setConvertedPrice] = useState<number>(0);

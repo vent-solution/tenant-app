@@ -2,38 +2,34 @@ import React, { useCallback, useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { AppDispatch } from "../../app/store";
 import PaginationButtons from "../../global/PaginationButtons";
-import { FACILITY_CATEGORY_DATA } from "../../global/PreDefinedData/PreDefinedData";
+import { ACCOMMODATION_TYPE_DATA } from "../../global/PreDefinedData/PreDefinedData";
+import {
+  fetchAvailableCondominiums,
+  getAvailableCondominiums,
+} from "./condominiumsSlice";
+import { AccommodationModel } from "../accommodations/AccommodationModel";
 import countriesList from "../../global/data/countriesList.json";
 import Select from "react-select";
-import { FacilitiesModel } from "../facilities/FacilityModel";
-import {
-  fetchFacilitiesForSale,
-  getFacilitiesForSale,
-} from "./facilitiesForSaleSlice";
-import FacilityDetails from "./FacilityDetails";
-import FacilityForSale from "./FacilityForSale";
-import EmptyList from "../../global/EmptyList";
 import Preloader from "../../other/Preloader";
+import EmptyList from "../../global/EmptyList";
+import CondominiumDetails from "./CondominiumDetails";
+import Condominium from "./Condominium";
 
 interface Props {}
 
-const FacilitiesForSale: React.FC<Props> = () => {
-  const [facilitiesFilter, setFacilitiesFilter] = useState<{
-    facilityType: string;
+const Condominiums: React.FC<Props> = () => {
+  const [unitsFilter, setUnitsFilter] = useState<{
+    accommodationType: string;
     country: string;
     city: string;
-  }>({ facilityType: "", country: "", city: "" });
+  }>({ accommodationType: "", country: "", city: "" });
 
-  const [filteredFacilities, setFilteredFacilities] = useState<
-    FacilitiesModel[]
-  >([]);
+  const [filteredUnits, setFilteredUnits] = useState<AccommodationModel[]>([]);
 
-  const [isShowFacilityDetails, setIsShowFacilityDetails] =
-    useState<boolean>(false);
+  const [isShowUnitDetails, setIsShowUnitDetails] = useState<boolean>(false);
 
-  const [selectedFacilityId, setSelectedFacilityId] = useState<Number | null>(
-    null
-  );
+  const [selectedAccommodationId, setSelectedAccommodationId] =
+    useState<Number | null>(null);
 
   const [selectedCountry, setSelectedCountry] = useState<{
     label: string;
@@ -42,128 +38,133 @@ const FacilitiesForSale: React.FC<Props> = () => {
 
   const dispatch = useDispatch<AppDispatch>();
 
-  const facilitiesForSaleState = useSelector(getFacilitiesForSale);
-  const { facilitiesForSale, page, totalPages, size, status } =
-    facilitiesForSaleState;
+  const availableCondominiumsState = useSelector(getAvailableCondominiums);
+  const { availableCondominiums, page, totalPages, size, status } =
+    availableCondominiumsState;
 
   // Handle the change of selected country
   const handleCountryChange = (
     selectedOption: { label: string; value: string } | null
   ) => {
-    setFacilitiesFilter((prev) => ({
+    setUnitsFilter((prev) => ({
       ...prev,
       country: String(selectedOption?.value),
     }));
     setSelectedCountry(selectedOption);
   };
 
+  // fetch available condominiums
+  useEffect(() => {
+    dispatch(fetchAvailableCondominiums({ page: 0, size: 25 }));
+  }, [dispatch]);
+
   // handle fetch next page
   const handleFetchNextPage = useCallback(async () => {
-    dispatch(fetchFacilitiesForSale({ page: page + 1, size: size }));
+    dispatch(fetchAvailableCondominiums({ page: page + 1, size: size }));
   }, [dispatch, page, size]);
 
   // handle fetch next page
   const handleFetchPreviousPage = useCallback(async () => {
-    dispatch(fetchFacilitiesForSale({ page: page - 1, size: size }));
+    dispatch(fetchAvailableCondominiums({ page: page - 1, size: size }));
   }, [dispatch, page, size]);
 
-  //filter facilities for sale depending on type, country and city
+  //filter accommodations depending on type, country and city
   useEffect(() => {
     if (
-      !facilitiesFilter.facilityType &&
-      !facilitiesFilter.country &&
-      !facilitiesFilter.city
+      !unitsFilter.accommodationType &&
+      !unitsFilter.country &&
+      !unitsFilter.city
     ) {
-      setFilteredFacilities(facilitiesForSale);
+      setFilteredUnits(availableCondominiums);
+      return;
     }
 
     if (
-      facilitiesFilter.facilityType.trim().length > 0 &&
-      facilitiesFilter.country.trim().length <= 0 &&
-      facilitiesFilter.city.trim().length <= 0
+      unitsFilter.accommodationType.trim().length > 0 &&
+      unitsFilter.country.trim().length <= 0 &&
+      unitsFilter.city.trim().length <= 0
     ) {
-      setFilteredFacilities(
-        facilitiesForSale.filter(
-          (facility) =>
-            facility.facilityCategory.trim().toLowerCase() ===
-            facilitiesFilter.facilityType.trim().toLocaleLowerCase()
+      setFilteredUnits(
+        availableCondominiums.filter(
+          (unit) =>
+            unit.accommodationType.toLowerCase() ===
+            unitsFilter.accommodationType.toLocaleLowerCase()
         )
       );
     }
 
     if (
-      facilitiesFilter.country.trim().length > 0 &&
-      facilitiesFilter.city.trim().length <= 0
+      unitsFilter.country.trim().length > 0 &&
+      unitsFilter.city.trim().length <= 0
     ) {
-      setFilteredFacilities(
-        facilitiesForSale.filter(
-          (facility) =>
-            facility.facilityCategory.toLowerCase() ===
-              facilitiesFilter.facilityType.toLocaleLowerCase() &&
-            facility.facilityLocation.country
+      setFilteredUnits(
+        availableCondominiums.filter(
+          (unit) =>
+            unit.accommodationType.toLowerCase() ===
+              unitsFilter.accommodationType.toLocaleLowerCase() &&
+            unit.facility.facilityLocation.country
               .toLowerCase()
-              .includes(facilitiesFilter.country.toLocaleLowerCase())
+              .includes(unitsFilter.country.toLocaleLowerCase())
         )
       );
     }
 
-    if (facilitiesFilter.city.trim().length > 0) {
-      setFilteredFacilities(
-        facilitiesForSale.filter(
-          (facility) =>
-            facility.facilityCategory.toLowerCase() ===
-              facilitiesFilter.facilityType.toLocaleLowerCase() &&
-            facility.facilityLocation.country
+    if (unitsFilter.city.trim().length > 0) {
+      setFilteredUnits(
+        availableCondominiums.filter(
+          (unit) =>
+            unit.accommodationType.toLowerCase() ===
+              unitsFilter.accommodationType.toLocaleLowerCase() &&
+            unit.facility.facilityLocation.country
               .toLowerCase()
-              .includes(facilitiesFilter.country.toLocaleLowerCase()) &&
-            facility.facilityLocation.city
+              .includes(unitsFilter.country.toLocaleLowerCase()) &&
+            unit.facility.facilityLocation.city
               .toLowerCase()
-              .includes(facilitiesFilter.city.toLocaleLowerCase())
+              .includes(unitsFilter.city.toLocaleLowerCase())
         )
       );
     }
   }, [
-    facilitiesForSale,
-    facilitiesFilter.facilityType,
-    facilitiesFilter.city,
-    facilitiesFilter.country,
+    availableCondominiums,
+    unitsFilter.accommodationType,
+    unitsFilter.city,
+    unitsFilter.country,
   ]);
 
   if (status === "loading") return <Preloader />;
 
-  if (isShowFacilityDetails)
+  if (isShowUnitDetails)
     return (
-      <FacilityDetails
-        selectedFacilityId={selectedFacilityId}
-        setIsShowFacilityDetails={setIsShowFacilityDetails}
+      <CondominiumDetails
+        accommodationId={selectedAccommodationId}
+        setIsShowUnitDetails={setIsShowUnitDetails}
+        setSelectedAccommodationId={setSelectedAccommodationId}
+        isShowUnitDetails={isShowUnitDetails}
       />
     );
 
   return (
-    <div className="list w-full relative">
+    <div className="w-full relative">
       <div className="bg-white w-full pt-3 lg:pt-0">
-        <div className="w-full h-1/3 flex flex-wrap justify-end items-center px-2 lg:px-10 py-1 bg-white shadow-lg mb-3">
+        <div className="w-full h-1/3 flex flex-wrap justify-end items-center px-10 py-1 bg-white shadow-lg mb-3">
           <div className="w-full lg:w-full flex flex-wrap justify-between items-center">
             <div
               className={` rounded-full  bg-white flex flex-wrap justify-around items-center  w-full lg:w-full h-3/4 mt-0 lg:mt-0 `}
             >
-              <h1 className="text-2xl font-bold w-full p-5">
-                Facilities for sale
-              </h1>
               <div className="w-full lg:w-1/4 text-lg capitalize px-5">
                 <select
                   name=""
-                  id="facilityType"
+                  id="facilityCategory"
                   className={`rounded-lg border w-full p-2 outline-none transition-all ease-in-out delay-150`}
                   onChange={(e) =>
-                    setFacilitiesFilter((prev) => ({
+                    setUnitsFilter((prev) => ({
                       ...prev,
-                      facilityType: String(e.target.value),
+                      accommodationType: String(e.target.value),
                     }))
                   }
                 >
                   <option value={""}>CATEGORY</option>
-                  {FACILITY_CATEGORY_DATA.map((type, index) => (
+                  {ACCOMMODATION_TYPE_DATA.map((type, index) => (
                     <option key={index} value={type.value}>
                       {type.label}
                     </option>
@@ -173,17 +174,17 @@ const FacilitiesForSale: React.FC<Props> = () => {
 
               <div className="w-full lg:w-1/4 text-lg capitalize px-5 py-2">
                 <Select
-                  isDisabled={!facilitiesFilter.facilityType}
+                  isDisabled={!unitsFilter.accommodationType}
                   value={selectedCountry} // Currently selected country
                   onChange={(e) => {
                     handleCountryChange(e);
-                    setFacilitiesFilter((prev) => ({
+                    setUnitsFilter((prev) => ({
                       ...prev,
                       country: String(e?.label),
                     }));
                   }} // Change handler
                   options={countriesList} // Array of country options
-                  placeholder="Country"
+                  placeholder="country"
                   isSearchable={true}
                 />
               </div>
@@ -192,12 +193,12 @@ const FacilitiesForSale: React.FC<Props> = () => {
                 <input
                   type="text"
                   name=""
-                  disabled={!facilitiesFilter.country}
+                  disabled={!unitsFilter.country}
                   id="search-subscription"
                   placeholder="City/municipality/district"
                   className={`rounded-lg w-full p-2 outline-none border transition-all ease-in-out delay-150`}
                   onChange={(e) =>
-                    setFacilitiesFilter((prev) => ({
+                    setUnitsFilter((prev) => ({
                       ...prev,
                       city: String(e.target.value),
                     }))
@@ -213,22 +214,22 @@ const FacilitiesForSale: React.FC<Props> = () => {
         </div>
       </div>
 
-      <div className="lg:px-5 mb-12 overflow-auto pb-5 h-[calc(100svh-160px)] relative">
-        {filteredFacilities.length > 0 ? (
+      <div className="lg:px-0 mb-12 overflow-auto pb-5 h-[calc(100svh-150px)] relative">
+        {filteredUnits.length > 0 ? (
           <div className="w-full lg:w-full p-2 bg-white m-auto flex flex-wrap">
             <div className="py-10 px-2 lg:px-10 w-full overflow-auto flex flex-wrap">
-              {filteredFacilities.map((facility, index) => (
-                <FacilityForSale
+              {filteredUnits.map((unit, index) => (
+                <Condominium
                   key={index}
-                  facility={facility}
-                  setSelectedFacilityId={setSelectedFacilityId}
-                  setIsShowFacilityDetails={setIsShowFacilityDetails}
+                  unit={unit}
+                  setSelectedAccommodationId={setSelectedAccommodationId}
+                  setIsShowUnitDetails={setIsShowUnitDetails}
                 />
               ))}
             </div>
           </div>
         ) : (
-          <EmptyList itemName="facility" />
+          <EmptyList itemName="condominium" />
         )}
       </div>
 
@@ -242,4 +243,4 @@ const FacilitiesForSale: React.FC<Props> = () => {
   );
 };
 
-export default FacilitiesForSale;
+export default Condominiums;

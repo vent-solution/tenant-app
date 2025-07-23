@@ -11,7 +11,7 @@ import ReceiptRow from "./ReceiptRow";
 import { fetchReceipts, getReceipts } from "./receiptsSlice";
 import { ReceiptModel } from "./ReceiptModel";
 import ReceiptDetails from "./ReceiptDetails";
-import EmptyList from "../../global/EnptyList";
+import EmptyList from "../../global/EmptyList";
 
 interface Props {}
 const ReceiptsList: React.FC<Props> = () => {
@@ -156,7 +156,7 @@ const ReceiptsList: React.FC<Props> = () => {
         </div>
 
         <div
-          className="lg:px-5 mb-12 overflow-auto pb-5"
+          className="lg:px-5 mb-10 mt-3 overflow-auto pb-5"
           style={{ height: "calc(100vh - 150px)" }}
         >
           {filteredReceipts.length > 0 ? (

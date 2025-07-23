@@ -90,7 +90,7 @@ const LandingPage: React.FC = () => {
           setIsShowTenantDetailsForm(true);
           return;
         } else {
-          navigate("/home");
+          navigate("/home/rent");
         }
       } catch (error) {
         if (axios.isCancel(error)) {

@@ -6,13 +6,13 @@ import SideBar from "../../sidebar/sideBar";
 import { UserModel } from "../users/models/userModel";
 import { PiBuildingsFill } from "react-icons/pi";
 import { FaHistory, FaReceipt } from "react-icons/fa";
-import Units from "./Units";
+import Units from "./Condominiums";
 import { TbBrandBooking } from "react-icons/tb";
+import Condominiums from "./Condominiums";
 
 interface Props {}
 
-const HomePage: React.FC<Props> = () => {
-  const view: boolean = false;
+const CondominiumsPage: React.FC<Props> = () => {
   const [navLinks, setNavLinks] = useState<NavLinkModel[]>([
     {
       icon: <MdDashboard />,
@@ -24,13 +24,13 @@ const HomePage: React.FC<Props> = () => {
           // icon: <MdDashboard />,
           name: "For rent/hospitality",
           link: "/home",
-          active: true,
+          active: false,
         },
         {
           // icon: <MdDashboard />,
           name: "For sale condominiums",
           link: "/home/condominiums",
-          active: false,
+          active: true,
         },
       ],
     },
@@ -103,11 +103,11 @@ const HomePage: React.FC<Props> = () => {
       </div>
       <div className="right lg:w-full w-full h-svh px-0 lg:px-0 py-0 overflow-y-auto  mt-0 lg:mt-0">
         <div className="flex w-full h-svh lg:h-dvh mt-20 lg:mt-0 z-0 bg-gray-100">
-          <Units />
+          <Condominiums />
         </div>
       </div>
     </div>
   );
 };
 
-export default HomePage;
+export default CondominiumsPage;

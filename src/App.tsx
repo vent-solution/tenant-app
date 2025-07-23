@@ -19,6 +19,7 @@ import { getUserLocation } from "./global/api";
 import LandingPage from "./modules/LandingPage";
 import AccommodationsPage from "./modules/accommodations/AccommodationsPage";
 import MoreUnitsPage from "./modules/home/MoreUnitsPages";
+import CondominiumsPage from "./modules/condominiums/CondominiumsPage";
 
 function App() {
   const [, setLoading] = useState(false);
@@ -50,6 +51,8 @@ function App() {
           <Route index element={<LandingPage />} />
         </Route>
         <Route path="home" element={<HomePage />} />
+        <Route path="home/rent" element={<HomePage />} />
+        <Route path="home/condominiums" element={<CondominiumsPage />} />
         <Route path="facilitiesForSale" element={<FacilitiesForSalePage />} />
         <Route path="accommodations" element={<AccommodationsPage />} />
         <Route path="bookings" element={<BookingsPage />} />
